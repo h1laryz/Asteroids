@@ -16,7 +16,7 @@ Asteroid::Asteroid()
 
 Asteroid::~Asteroid()
 {
-	delete this->sprite;
+	destroySprite(this->sprite);
 }
 
 bool Asteroid::getIsSmall()
