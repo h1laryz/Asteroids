@@ -3,18 +3,22 @@
 Game::Game()
 {
 	// window
-	windowWidth = 640; // 320x200 (was default)
-	windowHeight = 560;
-	fullscreen = false;
+	this->windowWidth = 640; // 320x200 (was default)
+	this->windowHeight = 560;
+	this->fullscreen = false;
 
 	// map
-	mapWidth = 700;
-	mapHeight = 700;
+	this->mapWidth = 700;
+	this->mapHeight = 700;
 
 	// properties
-	numOfBullets = 3;
-	numOfAsteroids = 10;
-	abilityProbability = 0.2f;
+	this->numOfBullets = 3;
+	this->numOfAsteroids = 10;
+	this->abilityProbability = 0.2f;
+
+	// game objects
+	this->player = nullptr;
+	
 }
 
 Game::Game(int argc, char** argv) : Game()
@@ -44,7 +48,7 @@ Game::Game(int argc, char** argv) : Game()
 			}
 			else if (param == "-ability_probability")
 			{
-				this->abilityProbability = atof(argv[i + 1]);
+				this->abilityProbability = (float)atof(argv[i + 1]);
 			}
 			else if (param == "-num_ammo")
 			{
@@ -64,6 +68,11 @@ Game::Game(int argc, char** argv) : Game()
 		"fullscreen " << fullscreen << std::endl;
 }
 
+Game::~Game()
+{
+	delete this->player;
+}
+
 void Game::PreInit(int& width, int& height, bool& fullscreen)
 {
 	width = this->windowWidth;
@@ -73,7 +82,7 @@ void Game::PreInit(int& width, int& height, bool& fullscreen)
 
 
 bool Game::Init() {
-
+	player = new Player();
 	return true;
 }
 
@@ -85,6 +94,7 @@ void Game::Close() {
 // Enters here every tick of game running
 bool Game::Tick() {
 	drawTestBackground();
+	this->player->drawPlayer(0, 0);
 	return false;
 }
 

@@ -3,10 +3,15 @@
 #include <vector>
 #include <string>
 #include "Framework.h"
+#include "Player.h"
 
 class Game : public Framework 
 {
 private:
+	// game objects
+	Player* player;
+
+	// params
 	unsigned int windowWidth, 
 		windowHeight, 
 		mapWidth, 
@@ -19,6 +24,7 @@ private:
 public:
 	Game();
 	Game(int argc, char** argv);
+	virtual ~Game();
 	virtual void PreInit(int& width, int& height, bool& fullscreen);
 	virtual bool Init();
 	virtual void Close();
