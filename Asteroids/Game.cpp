@@ -18,7 +18,7 @@ Game::Game()
 
 	// game objects
 	this->player = nullptr;
-	
+	lastInputtedKey = FRKey::COUNT;
 }
 
 Game::Game(int argc, char** argv) : Game()
@@ -82,19 +82,20 @@ void Game::PreInit(int& width, int& height, bool& fullscreen)
 
 
 bool Game::Init() {
-	player = new Player();
+	player = new Player(this->windowWidth, this->windowHeight);
 	return true;
 }
 
 // Enters here before closing (its empty but works)
 void Game::Close() {
-
+	
 }
 
 // Enters here every tick of game running
 bool Game::Tick() {
 	drawTestBackground();
-	this->player->drawPlayer(0, 0);
+	this->player->drawPlayer();
+	onKeyPressed(lastInputtedKey);
 	return false;
 }
 
@@ -107,11 +108,33 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 }
 
 void Game::onKeyPressed(FRKey k) {
+	switch (k)
+	{
+	case FRKey::RIGHT:
+		this->player->move(1, 0);
+		lastInputtedKey = FRKey::RIGHT;
+		break;
 
+	case FRKey::LEFT:
+		this->player->move(-1, 0);
+		lastInputtedKey = FRKey::LEFT;
+		break;
+
+	case FRKey::DOWN:
+		this->player->move(0, 1);
+		lastInputtedKey = FRKey::DOWN;
+		break;
+
+	case FRKey::UP:
+		this->player->move(0, -1);
+		lastInputtedKey = FRKey::UP;
+		break;
+	}
 }
 
 void Game::onKeyReleased(FRKey k) {
-
+	lastInputtedKey = FRKey::COUNT;
+	
 }
 
 const char* Game::GetTitle()

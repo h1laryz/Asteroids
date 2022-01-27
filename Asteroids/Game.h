@@ -11,6 +11,8 @@ private:
 	// game objects
 	Player* player;
 
+	// input
+	FRKey lastInputtedKey;
 	// params
 	unsigned int windowWidth, 
 		windowHeight, 
@@ -34,5 +36,6 @@ public:
 	virtual void onKeyPressed(FRKey k);
 	virtual void onKeyReleased(FRKey k);
 	virtual const char* GetTitle() override;
+
 };
 
