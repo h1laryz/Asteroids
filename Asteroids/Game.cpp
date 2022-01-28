@@ -104,25 +104,25 @@ void Game::checkOutOfBounce()
 	// check left
 	if (this->player->getPos().first < this->map->getPos().first)
 	{
-		this->map->flip(-1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, -1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 	// check right
 	else if (this->player->getPos().first + this->player->getPlayerSpriteSize().first 
 	> this->mapWidth + this->map->getPos().first)
 	{
-		this->map->flip(1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, 1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 
 	// check up
 	if (this->player->getPos().second < this->map->getPos().second)
 	{
-		this->map->flip(0, -1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, 0, -1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 	// check down
 	else if (this->player->getPos().second + this->player->getPlayerSpriteSize().second
 	> this->mapHeight + this->map->getPos().second)
 	{
-		this->map->flip(0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, 0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 }
 

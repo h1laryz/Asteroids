@@ -23,5 +23,7 @@ public:
 	void destroy();
 	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed);
 	static int getCount();
+	void flipByMap(std::pair<int, int> mapPos);
+	friend class Map;
 };
 

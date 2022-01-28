@@ -1,4 +1,5 @@
 #include "Map.h"
+#include <iostream>
 
 Map::Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight)
 {
@@ -24,9 +25,9 @@ Map::~Map()
 
 void Map::drawMap()
 {
-	for (size_t i = 0; i < countWidth; i++)
+	for (int i = 0; i < countWidth; i++)
 	{
-		for (size_t j = 0; j < countHeight; j++)
+		for (int j = 0; j < countHeight; j++)
 		{
 			drawSprite(this->sprite, x + i * (this->spriteWidth), y + j * (this->spriteHeight));
 		}
@@ -72,6 +73,24 @@ std::pair<int, int> Map::getPos()
 	return std::pair<int, int>(this->x, this->y);
 }
 
+void Map::flipAsteroids(std::vector<Asteroid*> asteroids, int xBefore, int yBefore, bool vertical, bool horisontal)
+{
+	if (vertical)
+	{
+		for (size_t i = 0; i < asteroids.size(); i++)
+		{
+			asteroids[i]->x = this->x - xBefore + asteroids[i]->x;
+		}
+	}
+	if (horisontal)
+	{
+		for (size_t i = 0; i < asteroids.size(); i++)
+		{
+			asteroids[i]->y = this->y - yBefore + asteroids[i]->y;
+		}
+	}
+}
+
 std::pair<int, int> Map::getCountSprites()
 {
 	return std::pair<int, int>(this->countWidth, this->countHeight);
@@ -82,21 +101,26 @@ std::pair<int, int> Map::getMapSize()
 	return std::pair<int, int>(this->mapWidth, this->mapHeight);
 }
 
-void Map::flip(int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
+void Map::flip(std::vector<Asteroid*> asteroids, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
 {
+	int xBefore = this->x;
+	int yBefore = this->y;
 	// left
 	if (byX == -1)
 	{
 		this->x = windowSize.first - spriteWidth * countWidth - this->x;
+		flipAsteroids(asteroids, xBefore, yBefore, true, false);
 	}
 	// right
 	else if (byX == 1)
 	{
 		this->x = windowSize.first - spriteWidth * countWidth - this->x - 1;
+		flipAsteroids(asteroids, xBefore, yBefore, true, false);
 	}
 	// up & down
 	if (byY == -1 || byY == 1)
 	{
 		this->y = windowSize.second - spriteHeight * countHeight - this->y;
+		flipAsteroids(asteroids, xBefore, yBefore, false, true);
 	}
 }
