@@ -38,6 +38,11 @@ void Map::destroy()
 	this->~Map();
 }
 
+int Map::getMovementSpeed()
+{
+	return movementSpeed;
+}
+
 void Map::calculateCountOfSprites(int mapWidth, int mapHeight)
 {
 	if ((double)mapWidth / this->spriteWidth == mapWidth / this->spriteWidth)

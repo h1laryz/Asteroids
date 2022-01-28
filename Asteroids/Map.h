@@ -26,5 +26,7 @@ public:
 	void flip(int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize);
 	std::pair<int, int> getPos();
 	std::pair<int, int> getCountSprites();
+	int getMovementSpeed();
+
 };
 

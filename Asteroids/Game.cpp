@@ -79,18 +79,22 @@ void Game::move(FRKey k)
 	{
 	case FRKey::RIGHT:
 		this->map->move(-1, 0);
+		Asteroid::move(this->asteroids, -1, 0, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::LEFT:
 		this->map->move(1, 0);
+		Asteroid::move(this->asteroids, 1, 0, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::DOWN:
 		this->map->move(0, -1);
+		Asteroid::move(this->asteroids, 0, -1, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::UP:
 		this->map->move(0, 1);
+		Asteroid::move(this->asteroids, 0, 1, this->map->getMovementSpeed());
 		break;
 	}
 }
@@ -161,10 +165,14 @@ void Game::spawnAsteroids()
 
 	for (size_t i = countOfAsteroids; i < numOfAsteroids; i++)
 	{
-		Asteroid* asteroid = new Asteroid;
-		asteroids.push_back(asteroid);
+		Asteroid* asteroid = new Asteroid(this->player->getPos(), this->player->getPlayerSpriteSize(), std::pair<int, int>(mapWidth, mapHeight), this->map->getPos());
+		this->asteroids.push_back(asteroid);
 	}
-	int stop = 1;
+
+	for (size_t i = 0; i < this->asteroids.size(); i++)
+	{
+		this->asteroids[i]->drawAsteroid();
+	}
 }
 
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {
@@ -180,29 +188,29 @@ void Game::onKeyPressed(FRKey k) {
 	switch (k)
 	{
 	case FRKey::RIGHT:
-		inputtedKeys.push_back(FRKey::RIGHT);
+		this->inputtedKeys.push_back(FRKey::RIGHT);
 		break;
 
 	case FRKey::LEFT:
-		inputtedKeys.push_back(FRKey::LEFT);
+		this->inputtedKeys.push_back(FRKey::LEFT);
 		break;
 
 	case FRKey::DOWN:
-		inputtedKeys.push_back(FRKey::DOWN);
+		this->inputtedKeys.push_back(FRKey::DOWN);
 		break;
 
 	case FRKey::UP:
-		inputtedKeys.push_back(FRKey::UP);
+		this->inputtedKeys.push_back(FRKey::UP);
 		break;
 	}
 }
 
 void Game::onKeyReleased(FRKey k) {
-	for (size_t i = 0; i < inputtedKeys.size(); i++)
+	for (size_t i = 0; i < this->inputtedKeys.size(); i++)
 	{
-		if (inputtedKeys[i] == k)
+		if (this->inputtedKeys[i] == k)
 		{
-			inputtedKeys.erase(inputtedKeys.begin() + i);
+			this->inputtedKeys.erase(this->inputtedKeys.begin() + i);
 		}
 	}
 	
@@ -210,9 +218,9 @@ void Game::onKeyReleased(FRKey k) {
 
 void Game::checkKeys()
 {
-	for (size_t i = 0; i < inputtedKeys.size(); i++)
+	for (size_t i = 0; i < this->inputtedKeys.size(); i++)
 	{
-		move(inputtedKeys[i]);
+		this->move(this->inputtedKeys[i]);
 	}
 }
 
