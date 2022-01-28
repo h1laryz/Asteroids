@@ -1,5 +1,7 @@
 #include "Asteroid.h"
 
+int Asteroid::count = 0;
+
 Asteroid::Asteroid()
 {
 	if (rand() % 2)
@@ -12,11 +14,28 @@ Asteroid::Asteroid()
 		this->sprite = createSprite("..\\data\\small_asteroid.png");
 		this->isSmall = true;
 	}
+	count++;
+}
+
+Asteroid::Asteroid(bool isSmall)
+{
+	if (isSmall)
+	{
+		this->sprite = createSprite("..\\data\\small_asteroid.png");
+		this->isSmall = true;
+	}
+	else
+	{
+		this->sprite = createSprite("..\\data\\big_asteroid.png");
+		this->isSmall = false;
+	}
+	count++;
 }
 
 Asteroid::~Asteroid()
 {
 	destroySprite(this->sprite);
+	count--;
 }
 
 bool Asteroid::getIsSmall()
@@ -37,6 +56,11 @@ void Asteroid::getAsteroidSpriteSize(int& w, int& h)
 void Asteroid::destroy()
 {
 	this->~Asteroid();
+}
+
+int Asteroid::getCount()
+{
+	return count;
 }
 
 

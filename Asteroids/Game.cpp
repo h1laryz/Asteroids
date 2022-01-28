@@ -123,7 +123,6 @@ void Game::checkOutOfBounce()
 	{
 		this->map->flip(0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
-
 }
 
 void Game::PreInit(int& width, int& height, bool& fullscreen)
@@ -153,14 +152,23 @@ void Game::Close() {
 // Enters here every tick of game running
 bool Game::Tick() {
 	this->map->drawMap();
-	//for (size_t i = 0; i < asteroids.size(); i++)
-	//{
-	//	this->asteroids[i]->drawAsteroid(i*50, i*50);
-	//}
+	this->spawnAsteroids();
 	this->player->drawPlayer();
 	this->checkKeys();
 	this->checkOutOfBounce();
 	return false;
+}
+
+void Game::spawnAsteroids()
+{
+	size_t countOfAsteroids = Asteroid::getCount();
+
+	for (size_t i = countOfAsteroids; i < numOfAsteroids; i++)
+	{
+		Asteroid* asteroid = new Asteroid;
+		asteroids.push_back(asteroid);
+	}
+	int stop = 1;
 }
 
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {

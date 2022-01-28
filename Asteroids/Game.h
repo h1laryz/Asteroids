@@ -28,6 +28,7 @@ private:
 
 	virtual void move(FRKey k);
 	void checkOutOfBounce();
+	void spawnAsteroids();
 public:
 	Game();
 	Game(int argc, char** argv);
