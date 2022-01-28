@@ -3,8 +3,8 @@
 Game::Game()
 {
 	// window
-	this->windowWidth = 640; // 320x200 (was default)
-	this->windowHeight = 560;
+	this->windowWidth = 700; // 320x200 (was default)
+	this->windowHeight = 700;
 	this->fullscreen = false;
 
 	// map
@@ -104,7 +104,12 @@ void Game::PreInit(int& width, int& height, bool& fullscreen)
 
 bool Game::Init() {
 	player = new Player(this->windowWidth, this->windowHeight);
-	map = createSprite("..\\data\\background.png");
+	map = new Map(this->mapWidth, this->mapHeight);
+	for (size_t i = 0; i < numOfAsteroids; i++)
+	{
+		Asteroid* temp = new Asteroid();
+		asteroids.push_back(temp);
+	}
 	return true;
 }
 
@@ -115,7 +120,11 @@ void Game::Close() {
 
 // Enters here every tick of game running
 bool Game::Tick() {
-	drawSprite(map, 0, 0);
+	this->map->drawMap();
+	//for (size_t i = 0; i < asteroids.size(); i++)
+	//{
+	//	this->asteroids[i]->drawAsteroid(i*50, i*50);
+	//}
 	this->player->drawPlayer();
 	this->checkKeys();
 	return false;

@@ -4,13 +4,16 @@
 #include <string>
 #include "Framework.h"
 #include "Player.h"
+#include "Map.h"
+#include "Asteroid.h"
 
 class Game : public Framework 
 {
 private:
 	// game objects
 	Player* player;
-	Sprite* map;
+	Map* map;
+	std::vector<Asteroid*> asteroids;
 	// input
 	std::vector<FRKey> inputtedKeys;
 	// params
