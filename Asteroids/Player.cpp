@@ -21,11 +21,6 @@ void Player::drawPlayer()
 	drawSprite(this->sprite, this->x, this->y);
 }
 
-void Player::getPlayerSpriteSize(int& w, int& h)
-{
-	getSpriteSize(this->sprite, w, h);
-}
-
 void Player::destroy()
 {
 	this->~Player();
@@ -40,4 +35,9 @@ void Player::move(int dirX, int dirY)
 std::pair<int, int> Player::getPos()
 {
 	return std::pair<int, int>(this->x, this->y);
+}
+
+std::pair<int, int> Player::getPlayerSpriteSize()
+{
+	return std::pair<int, int>(spriteWidth, spriteHeight);
 }

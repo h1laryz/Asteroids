@@ -12,7 +12,7 @@ Map::Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight)
 	this->x = (windowWidth - spriteWidth* countWidth) / 2;
 	this->y = (windowHeight - spriteHeight* countHeight) / 2;
 
-	int stop = 1;
+	this->movementSpeed = 1;
 
 }
 
@@ -35,4 +35,44 @@ void Map::drawMap()
 void Map::destroy()
 {
 	this->~Map();
+}
+
+void Map::move(int dirX, int dirY)
+{
+	this->x = this->x + dirX * this->movementSpeed;
+	this->y = this->y + dirY * this->movementSpeed;
+}
+
+void Map::getMapSpriteSize(int& w, int& h)
+{
+	getSpriteSize(this->sprite, w, h);
+}
+
+std::pair<int, int> Map::getPos()
+{
+	return std::pair<int, int>(this->x, this->y);
+}
+
+std::pair<int, int> Map::getCountSprites()
+{
+	return std::pair<int, int>(this->countWidth, this->countHeight);
+}
+
+void Map::flip(int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
+{
+	// left
+	if (byX == -1)
+	{
+		this->x = windowSize.first - spriteWidth * countWidth - this->x;
+	}
+	// right
+	else if (byX == 1)
+	{
+		this->x = windowSize.first - spriteWidth * countWidth - this->x - 1;
+	}
+	// up & down
+	if (byY == -1 || byY == 1)
+	{
+		this->y = windowSize.second - spriteHeight * countHeight - this->y;
+	}
 }

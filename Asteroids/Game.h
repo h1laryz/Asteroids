@@ -27,6 +27,7 @@ private:
 	bool fullscreen;
 
 	virtual void move(FRKey k);
+	void checkOutOfBounce();
 public:
 	Game();
 	Game(int argc, char** argv);

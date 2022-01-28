@@ -13,9 +13,10 @@ public:
 	Player(int windowWidth, int windowHeight);
 	virtual ~Player();
 	void drawPlayer();
-	void getPlayerSpriteSize(int& w, int& h);
 	void destroy();
 	void move(int dirX, int dirY);
 	std::pair<int, int> getPos();
+	std::pair<int, int> getPlayerSpriteSize();
+
 };
 

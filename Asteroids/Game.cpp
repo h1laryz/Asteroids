@@ -3,13 +3,13 @@
 Game::Game()
 {
 	// window
-	this->windowWidth = 700; // 320x200 (was default)
-	this->windowHeight = 700;
+	this->windowWidth = 900; // 320x200 (was default)
+	this->windowHeight = 900;
 	this->fullscreen = false;
 
 	// map
-	this->mapWidth = 500;
-	this->mapHeight = 500;
+	this->mapWidth = 600;
+	this->mapHeight = 600;
 
 	// properties
 	this->numOfBullets = 3;
@@ -78,21 +78,52 @@ void Game::move(FRKey k)
 	switch (k)
 	{
 	case FRKey::RIGHT:
-		this->player->move(1, 0);
+		this->map->move(-1, 0);
 		break;
 
 	case FRKey::LEFT:
-		this->player->move(-1, 0);
+		this->map->move(1, 0);
 		break;
 
 	case FRKey::DOWN:
-		this->player->move(0, 1);
+		this->map->move(0, -1);
 		break;
 
 	case FRKey::UP:
-		this->player->move(0, -1);
+		this->map->move(0, 1);
 		break;
 	}
+}
+
+void Game::checkOutOfBounce()
+{
+	int mapSpriteW, mapSpriteH;
+	this->map->getMapSpriteSize(mapSpriteW, mapSpriteH);
+
+	// check left
+	if (this->player->getPos().first < this->map->getPos().first)
+	{
+		this->map->flip(-1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+	}
+	// check right
+	else if (this->player->getPos().first + this->player->getPlayerSpriteSize().first > 
+		this->map->getCountSprites().first * mapSpriteW + this->map->getPos().first)
+	{
+		this->map->flip(1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+	}
+
+	// check up
+	if (this->player->getPos().second < this->map->getPos().second)
+	{
+		this->map->flip(0, -1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+	}
+	// check down
+	else if (this->player->getPos().second + this->player->getPlayerSpriteSize().second
+	> this->map->getCountSprites().second * mapSpriteH + this->map->getPos().second)
+	{
+		this->map->flip(0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+	}
+
 }
 
 void Game::PreInit(int& width, int& height, bool& fullscreen)
@@ -128,6 +159,7 @@ bool Game::Tick() {
 	//}
 	this->player->drawPlayer();
 	this->checkKeys();
+	this->checkOutOfBounce();
 	return false;
 }
 
