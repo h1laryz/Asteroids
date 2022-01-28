@@ -10,9 +10,9 @@ class Game : public Framework
 private:
 	// game objects
 	Player* player;
-
+	Sprite* map;
 	// input
-	FRKey lastInputtedKey;
+	std::vector<FRKey> inputtedKeys;
 	// params
 	unsigned int windowWidth, 
 		windowHeight, 
@@ -23,6 +23,7 @@ private:
 	float abilityProbability;
 	bool fullscreen;
 
+	virtual void move(FRKey k);
 public:
 	Game();
 	Game(int argc, char** argv);
@@ -35,6 +36,8 @@ public:
 	virtual void onMouseButtonClick(FRMouseButton button, bool isReleased);
 	virtual void onKeyPressed(FRKey k);
 	virtual void onKeyReleased(FRKey k);
+	virtual void checkKeys();
+	
 	virtual const char* GetTitle() override;
 
 };

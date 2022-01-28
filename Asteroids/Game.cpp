@@ -18,7 +18,6 @@ Game::Game()
 
 	// game objects
 	this->player = nullptr;
-	lastInputtedKey = FRKey::COUNT;
 }
 
 Game::Game(int argc, char** argv) : Game()
@@ -73,6 +72,28 @@ Game::~Game()
 	delete this->player;
 }
 
+void Game::move(FRKey k)
+{
+	switch (k)
+	{
+	case FRKey::RIGHT:
+		this->player->move(1, 0);
+		break;
+
+	case FRKey::LEFT:
+		this->player->move(-1, 0);
+		break;
+
+	case FRKey::DOWN:
+		this->player->move(0, 1);
+		break;
+
+	case FRKey::UP:
+		this->player->move(0, -1);
+		break;
+	}
+}
+
 void Game::PreInit(int& width, int& height, bool& fullscreen)
 {
 	width = this->windowWidth;
@@ -83,6 +104,7 @@ void Game::PreInit(int& width, int& height, bool& fullscreen)
 
 bool Game::Init() {
 	player = new Player(this->windowWidth, this->windowHeight);
+	map = createSprite("..\\data\\background.png");
 	return true;
 }
 
@@ -93,9 +115,9 @@ void Game::Close() {
 
 // Enters here every tick of game running
 bool Game::Tick() {
-	drawTestBackground();
+	drawSprite(map, 0, 0);
 	this->player->drawPlayer();
-	onKeyPressed(lastInputtedKey);
+	this->checkKeys();
 	return false;
 }
 
@@ -107,34 +129,45 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 
 }
 
+
 void Game::onKeyPressed(FRKey k) {
 	switch (k)
 	{
 	case FRKey::RIGHT:
-		this->player->move(1, 0);
-		lastInputtedKey = FRKey::RIGHT;
+		inputtedKeys.push_back(FRKey::RIGHT);
 		break;
 
 	case FRKey::LEFT:
-		this->player->move(-1, 0);
-		lastInputtedKey = FRKey::LEFT;
+		inputtedKeys.push_back(FRKey::LEFT);
 		break;
 
 	case FRKey::DOWN:
-		this->player->move(0, 1);
-		lastInputtedKey = FRKey::DOWN;
+		inputtedKeys.push_back(FRKey::DOWN);
 		break;
 
 	case FRKey::UP:
-		this->player->move(0, -1);
-		lastInputtedKey = FRKey::UP;
+		inputtedKeys.push_back(FRKey::UP);
 		break;
 	}
 }
 
 void Game::onKeyReleased(FRKey k) {
-	lastInputtedKey = FRKey::COUNT;
+	for (size_t i = 0; i < inputtedKeys.size(); i++)
+	{
+		if (inputtedKeys[i] == k)
+		{
+			inputtedKeys.erase(inputtedKeys.begin() + i);
+		}
+	}
 	
+}
+
+void Game::checkKeys()
+{
+	for (size_t i = 0; i < inputtedKeys.size(); i++)
+	{
+		move(inputtedKeys[i]);
+	}
 }
 
 const char* Game::GetTitle()
