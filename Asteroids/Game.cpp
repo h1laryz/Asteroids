@@ -8,8 +8,8 @@ Game::Game()
 	this->fullscreen = false;
 
 	// map
-	this->mapWidth = 700;
-	this->mapHeight = 700;
+	this->mapWidth = 500;
+	this->mapHeight = 500;
 
 	// properties
 	this->numOfBullets = 3;
@@ -18,6 +18,7 @@ Game::Game()
 
 	// game objects
 	this->player = nullptr;
+	this->map = nullptr;
 }
 
 Game::Game(int argc, char** argv) : Game()
@@ -104,7 +105,7 @@ void Game::PreInit(int& width, int& height, bool& fullscreen)
 
 bool Game::Init() {
 	player = new Player(this->windowWidth, this->windowHeight);
-	map = new Map(this->mapWidth, this->mapHeight);
+	map = new Map(this->mapWidth, this->mapHeight, this->windowWidth, this->windowHeight);
 	for (size_t i = 0; i < numOfAsteroids; i++)
 	{
 		Asteroid* temp = new Asteroid();

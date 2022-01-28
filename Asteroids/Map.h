@@ -8,8 +8,9 @@ private:
 	int spriteWidth, spriteHeight;
 	int countWidth, countHeight;
 	int mapWidth, mapHeight;
+	int x, y;
 public:
-	Map(int windowWidth, int windowHeight);
+	Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight);
 	virtual ~Map();
 	void drawMap();
 	void getMapSpriteSize(int& w, int& h);
