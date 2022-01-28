@@ -17,20 +17,6 @@ Asteroid::Asteroid()
 	count++;
 }
 
-Asteroid::Asteroid(bool isSmall)
-{
-	if (isSmall)
-	{
-		this->sprite = createSprite("..\\data\\small_asteroid.png");
-		this->isSmall = true;
-	}
-	else
-	{
-		this->sprite = createSprite("..\\data\\big_asteroid.png");
-		this->isSmall = false;
-	}
-	count++;
-}
 
 Asteroid::~Asteroid()
 {

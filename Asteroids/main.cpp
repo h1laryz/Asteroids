@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-	srand(time(0));
+	srand((unsigned int)time(0));;
 	Game game(argc, argv);
 	return run(&game);
 }

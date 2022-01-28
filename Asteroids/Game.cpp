@@ -97,17 +97,14 @@ void Game::move(FRKey k)
 
 void Game::checkOutOfBounce()
 {
-	int mapSpriteW, mapSpriteH;
-	this->map->getMapSpriteSize(mapSpriteW, mapSpriteH);
-
 	// check left
 	if (this->player->getPos().first < this->map->getPos().first)
 	{
 		this->map->flip(-1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 	// check right
-	else if (this->player->getPos().first + this->player->getPlayerSpriteSize().first > 
-		this->map->getCountSprites().first * mapSpriteW + this->map->getPos().first)
+	else if (this->player->getPos().first + this->player->getPlayerSpriteSize().first 
+	> this->mapWidth + this->map->getPos().first)
 	{
 		this->map->flip(1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
@@ -119,7 +116,7 @@ void Game::checkOutOfBounce()
 	}
 	// check down
 	else if (this->player->getPos().second + this->player->getPlayerSpriteSize().second
-	> this->map->getCountSprites().second * mapSpriteH + this->map->getPos().second)
+	> this->mapHeight + this->map->getPos().second)
 	{
 		this->map->flip(0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
@@ -134,13 +131,12 @@ void Game::PreInit(int& width, int& height, bool& fullscreen)
 
 
 bool Game::Init() {
-	player = new Player(this->windowWidth, this->windowHeight);
-	map = new Map(this->mapWidth, this->mapHeight, this->windowWidth, this->windowHeight);
-	for (size_t i = 0; i < numOfAsteroids; i++)
-	{
-		Asteroid* temp = new Asteroid();
-		asteroids.push_back(temp);
-	}
+	this->player = new Player(this->windowWidth, this->windowHeight);
+	this->map = new Map(this->mapWidth, this->mapHeight, this->windowWidth, this->windowHeight);
+
+	this->mapWidth = this->map->getMapSize().first;
+	this->mapHeight = this->map->getMapSize().second;
+
 	return true;
 }
 

@@ -7,10 +7,11 @@ class Asteroid
 private:
 	static int count;
 	Sprite* sprite;
+	int x, y;
+	int dirX, dirY;
 	bool isSmall;
 public:
 	Asteroid();
-	Asteroid(bool isSmall);
 	virtual ~Asteroid();
 	bool getIsSmall();
 	void drawAsteroid(int x, int y);

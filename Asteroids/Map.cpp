@@ -2,15 +2,16 @@
 
 Map::Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight)
 {
-	this->mapWidth = mapWidth;
-	this->mapHeight = mapHeight;
 	this->sprite = createSprite("..\\data\\background.png");
 	getSpriteSize(sprite, this->spriteWidth, this->spriteHeight);
-	this->countWidth = this->mapWidth / this->spriteWidth + 1; // not always must be +1 (TODO: fix)
-	this->countHeight = this->mapHeight / this->spriteHeight + 1;
 
-	this->x = (windowWidth - spriteWidth* countWidth) / 2;
-	this->y = (windowHeight - spriteHeight* countHeight) / 2;
+	this->calculateCountOfSprites(mapWidth, mapHeight);
+		
+	this->mapWidth = this->spriteWidth * this->countWidth;
+	this->mapHeight = this->spriteHeight * this->countHeight;
+
+	this->x = (windowWidth - spriteWidth * countWidth) / 2;
+	this->y = (windowHeight - spriteHeight * countHeight) / 2;
 
 	this->movementSpeed = 1;
 
@@ -37,6 +38,19 @@ void Map::destroy()
 	this->~Map();
 }
 
+void Map::calculateCountOfSprites(int mapWidth, int mapHeight)
+{
+	if ((double)mapWidth / this->spriteWidth == mapWidth / this->spriteWidth)
+		this->countWidth = mapWidth / this->spriteWidth;
+	else
+		this->countWidth = mapWidth / this->spriteWidth + 1;
+
+	if ((double)mapHeight / this->spriteHeight == mapHeight / this->spriteHeight)
+		this->countHeight = mapHeight / this->spriteHeight;
+	else
+		this->countHeight = mapHeight / this->spriteHeight + 1;
+}
+
 void Map::move(int dirX, int dirY)
 {
 	this->x = this->x + dirX * this->movementSpeed;
@@ -56,6 +70,11 @@ std::pair<int, int> Map::getPos()
 std::pair<int, int> Map::getCountSprites()
 {
 	return std::pair<int, int>(this->countWidth, this->countHeight);
+}
+
+std::pair<int, int> Map::getMapSize()
+{
+	return std::pair<int, int>(this->mapWidth, this->mapHeight);
 }
 
 void Map::flip(int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
