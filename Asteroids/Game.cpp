@@ -13,7 +13,7 @@ Game::Game()
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 0;
+	this->numOfAsteroids = 1;
 	this->abilityProbability = 0.2f;
 
 	// game objects
@@ -233,6 +233,7 @@ bool Game::Tick() {
 	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
 	this->checkAllBulletsCollisions();
+	this->checkPlayerCollisions();
 	return false;
 }
 
@@ -300,6 +301,58 @@ void Game::checkAllBulletsCollisions()
 			}
 		}
 	}
+}
+
+void Game::checkPlayerCollisions()
+{
+	std::pair<int, int> playerPos = player->getPos();
+	std::pair<int, int> bulletSpriteSize = player->getPlayerSpriteSize();
+
+	for (size_t j = 0; j < asteroids.size(); j++)
+	{
+		std::pair<int, int> asteroidPos = asteroids[j]->getPos();
+		std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
+
+		bool xCollision = false;
+		bool yCollision = false;
+
+		if ((playerPos.first >= asteroidPos.first && playerPos.first <= asteroidPos.first + asteroidSpriteSize.first)
+			|| (playerPos.first + bulletSpriteSize.first >= asteroidPos.first && playerPos.first + bulletSpriteSize.first <= asteroidPos.first + asteroidSpriteSize.first)
+			|| (asteroidPos.first >= playerPos.first && asteroidPos.first <= playerPos.first + bulletSpriteSize.first)
+			|| (asteroidPos.first + asteroidSpriteSize.first >= playerPos.first && asteroidPos.first + asteroidSpriteSize.first <= playerPos.first + bulletSpriteSize.first))
+		{
+			xCollision = true;
+		}
+
+		if ((playerPos.second >= asteroidPos.second && playerPos.second <= asteroidPos.second + asteroidSpriteSize.second)
+			|| (playerPos.second + bulletSpriteSize.second >= asteroidPos.second && playerPos.second + bulletSpriteSize.second <= asteroidPos.second + asteroidSpriteSize.second)
+			|| (asteroidPos.second >= playerPos.second && asteroidPos.second <= playerPos.second + bulletSpriteSize.second)
+			|| (asteroidPos.second + asteroidSpriteSize.second >= playerPos.second && asteroidPos.second + asteroidSpriteSize.second <= playerPos.second + bulletSpriteSize.second))
+		{
+			yCollision = true;
+		}
+
+		if (xCollision && yCollision)
+			this->restart();
+	}
+}
+
+void Game::restart()
+{
+	delete player;
+	delete crosshair;
+	for (size_t i = 0; i < bullets.size(); i++)
+	{
+		delete bullets[i];
+	}
+	for (size_t i = 0; i < asteroids.size(); i++)
+	{
+		delete asteroids[i];
+	}
+	this->bullets.clear();
+	this->asteroids.clear();
+	this->Init();
+	
 }
 
 bool Game::checkBulletHit(std::pair<float, float> bulletPos, std::pair<int, int> bulletSpriteSize, std::pair<int, int> asteroidPos, std::pair<int, int> asteroidSpriteSize)

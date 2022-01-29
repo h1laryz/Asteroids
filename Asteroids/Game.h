@@ -50,6 +50,8 @@ private:
 	void checkAsteroidsOutOfBounds();
 	void spawnAsteroids();
 	void checkAllBulletsCollisions();
+	void checkPlayerCollisions();
+	void restart();
 	bool checkBulletHit(std::pair<float, float> bulletPos, std::pair<int, int> bulletSpriteSize, std::pair<int, int> asteroidPos, std::pair<int, int> asteroidSpriteSize);
 
 public:
