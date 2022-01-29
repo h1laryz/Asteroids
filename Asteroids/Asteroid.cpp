@@ -174,6 +174,32 @@ void Asteroid::destroy()
 	this->~Asteroid();
 }
 
+void Asteroid::flip(int byX, int byY, std::pair<int, int> mapSize)
+{
+	// flip by left
+	if (byX == -1)
+	{
+		this->x = this->x + mapSize.first - this->spriteWidth;
+	}
+	// flip by right
+	else if (byX == 1)
+	{
+		this->x = this->x - mapSize.first + this->spriteWidth;
+	}
+	
+
+	// flip by up
+	if (byY == 1)
+	{
+		this->y = this->y + mapSize.second - this->spriteHeight;
+	}
+	// flip by down
+	else if (byY == -1)
+	{
+		this->y = this->y - mapSize.second + this->spriteHeight;
+	}
+}
+
 int Asteroid::getCount()
 {
 	return count;

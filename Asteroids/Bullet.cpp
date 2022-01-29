@@ -2,6 +2,13 @@
 #include "Bullet.h"
 #include <iostream>
 
+int Bullet::count = 0;
+
+int Bullet::getCount()
+{
+	return Bullet::count;
+}
+
 Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos)
 {
 	this->sprite = createSprite("..\\data\\bullet.png");
@@ -24,6 +31,8 @@ Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos)
 	this->currVelocity.second = this->aimDirNorm.second * this->speed;
 
 	std::cout << "currVelocity: " << this->currVelocity.first << ", " << this->currVelocity.second << std::endl;
+
+	count++;
 }
 
 void Bullet::move(std::vector<Bullet*> bullets, int dirX, int dirY, int movementSpeed)
@@ -50,6 +59,7 @@ void Bullet::draw()
 Bullet::~Bullet()
 {
 	destroySprite(this->sprite);
+	count--;
 }
 
 std::pair<float, float> Bullet::getPos()

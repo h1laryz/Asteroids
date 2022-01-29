@@ -6,6 +6,7 @@
 class Bullet
 {
 private:
+	static int count;
 	Sprite* sprite;
 	int spriteWidth, spriteHeight;
 	float x, y;
@@ -14,6 +15,7 @@ private:
 	std::pair<float, float> currVelocity;
 	float speed;
 public:
+	static int getCount();
 	Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos);
 	static void move(std::vector<Bullet*> bullets, int dirX, int dirY, int movementSpeed);
 	void update();

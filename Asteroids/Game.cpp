@@ -13,7 +13,7 @@ Game::Game()
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 25;
+	this->numOfAsteroids = 1;
 	this->abilityProbability = 0.2f;
 
 	// game objects
@@ -108,13 +108,14 @@ void Game::checkOutOfBounds()
 {
 	this->checkPlayerOutOfBounds();
 	this->checkBulletsOutOfBounds();
+	this->checkAsteroidsOutOfBounds();
 }
 
-void Game::checkBulletsOutOfBounds()
+void Game::checkBulletsOutOfBounds() // TODO: pass gameObject* 
 {
-	// check left
 	for (size_t i = 0; i < bullets.size(); i++)
 	{
+		// check left
 		if (this->bullets[i]->getPos().first < this->map->getPos().first)
 		{
 			this->bullets[i]->flip(-1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
@@ -138,7 +139,36 @@ void Game::checkBulletsOutOfBounds()
 			this->bullets[i]->flip(0, -1, std::pair<int, int>(this->mapWidth, this->mapHeight));
 		}
 	}
-	
+}
+
+void Game::checkAsteroidsOutOfBounds()
+{
+	for (size_t i = 0; i < asteroids.size(); i++)
+	{
+		// check left
+		if (this->asteroids[i]->getPos().first < this->map->getPos().first)
+		{
+			this->asteroids[i]->flip(-1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
+		}
+		// check right
+		else if (this->asteroids[i]->getPos().first + this->asteroids[i]->getAsteroidSpriteSize().first
+		> this->mapWidth + this->map->getPos().first)
+		{
+			this->asteroids[i]->flip(1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
+		}
+
+		// check up
+		if (this->asteroids[i]->getPos().second < this->map->getPos().second)
+		{
+			this->asteroids[i]->flip(0, 1, std::pair<int, int>(this->mapWidth, this->mapHeight));
+		}
+		// check down
+		else if (this->asteroids[i]->getPos().second + this->asteroids[i]->getAsteroidSpriteSize().second
+		> this->mapHeight + this->map->getPos().second)
+		{
+			this->asteroids[i]->flip(0, -1, std::pair<int, int>(this->mapWidth, this->mapHeight));
+		}
+	}
 }
 
 void Game::checkPlayerOutOfBounds()

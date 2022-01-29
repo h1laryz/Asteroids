@@ -29,6 +29,7 @@ public:
 	void drawAsteroid();
 	std::pair<int, int> getAsteroidSpriteSize();
 	void destroy();
+	void flip(int byX, int byY, std::pair<int, int> mapSize);
 	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed);
 	static int getCount();
 	void update();
