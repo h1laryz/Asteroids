@@ -106,13 +106,50 @@ void Game::move(FRKey k)
 
 void Game::checkOutOfBounds()
 {
+	this->checkPlayerOutOfBounds();
+	this->checkBulletsOutOfBounds();
+}
+
+void Game::checkBulletsOutOfBounds()
+{
+	// check left
+	for (size_t i = 0; i < bullets.size(); i++)
+	{
+		if (this->bullets[i]->getPos().first < this->map->getPos().first)
+		{
+			this->bullets[i]->flip(-1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
+		}
+		// check right
+		else if (this->bullets[i]->getPos().first + this->bullets[i]->getBulletSpriteSize().first
+		> this->mapWidth + this->map->getPos().first)
+		{
+			this->bullets[i]->flip(1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
+		}
+
+		// check up
+		if (this->bullets[i]->getPos().second < this->map->getPos().second)
+		{
+			this->bullets[i]->flip(0, 1, std::pair<int, int>(this->mapWidth, this->mapHeight));
+		}
+		// check down
+		else if (this->bullets[i]->getPos().second + this->bullets[i]->getBulletSpriteSize().second
+		> this->mapHeight + this->map->getPos().second)
+		{
+			this->bullets[i]->flip(0, -1, std::pair<int, int>(this->mapWidth, this->mapHeight));
+		}
+	}
+	
+}
+
+void Game::checkPlayerOutOfBounds()
+{
 	// check left
 	if (this->player->getPos().first < this->map->getPos().first)
 	{
 		this->map->flip(asteroids, bullets, -1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 	// check right
-	else if (this->player->getPos().first + this->player->getPlayerSpriteSize().first 
+	else if (this->player->getPos().first + this->player->getPlayerSpriteSize().first
 	> this->mapWidth + this->map->getPos().first)
 	{
 		this->map->flip(asteroids, bullets, 1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
@@ -130,6 +167,7 @@ void Game::checkOutOfBounds()
 		this->map->flip(asteroids, bullets, 0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 }
+
 
 void Game::PreInit(int& width, int& height, bool& fullscreen)
 {
@@ -150,7 +188,7 @@ bool Game::Init() {
 	return true;
 }
 
-// Enters here before closing (its empty but works)
+// Enters here before closing 
 void Game::Close() {
 	
 }
@@ -192,11 +230,12 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 	{
 	case FRMouseButton::LEFT:
 		if (isReleased)
-			bullets.push_back(this->player->shoot(this->crosshair->getPos()));
+			bullets.push_back(this->player->shoot(std::pair<int, int>
+				(this->crosshair->getPos().first + this->crosshair->getCrosshairSpriteSize().first / 2, 
+					this->crosshair->getPos().second + this->crosshair->getCrosshairSpriteSize().second / 2)));
 		break;
 	}
 }
-
 
 void Game::onKeyPressed(FRKey k) {
 	switch (k)

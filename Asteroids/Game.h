@@ -30,23 +30,30 @@ private:
 	float abilityProbability;
 	bool fullscreen;
 
-	virtual void move(FRKey k);
+	// Framework override
+	void PreInit(int& width, int& height, bool& fullscreen) override;
+	bool Init() override;
+	void Close() override;
+	bool Tick() override;
+	void onMouseMove(int x, int y, int xrelative, int yrelative) override;
+	void onMouseButtonClick(FRMouseButton button, bool isReleased) override;
+	void onKeyPressed(FRKey k) override;
+	void onKeyReleased(FRKey k) override;
+
+
+	void checkKeys();
+	void updateAndDrawBullets();
+	void move(FRKey k);
 	void checkOutOfBounds();
+	void checkPlayerOutOfBounds();
+	void checkBulletsOutOfBounds();
 	void spawnAsteroids();
+	void checkBulletHit();
 public:
 	Game();
 	Game(int argc, char** argv);
 	virtual ~Game();
-	virtual void PreInit(int& width, int& height, bool& fullscreen);
-	virtual bool Init();
-	virtual void Close();
-	virtual bool Tick();
-	virtual void onMouseMove(int x, int y, int xrelative, int yrelative);
-	virtual void onMouseButtonClick(FRMouseButton button, bool isReleased);
-	virtual void onKeyPressed(FRKey k);
-	virtual void onKeyReleased(FRKey k);
-	virtual void checkKeys();
-	void updateAndDrawBullets();
+	
 	virtual const char* GetTitle() override;
 
 };

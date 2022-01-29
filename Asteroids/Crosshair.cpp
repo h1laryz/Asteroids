@@ -40,3 +40,8 @@ std::pair<int, int> Crosshair::getPos()
 {
 	return std::pair<int, int>(this->x, this->y);
 }
+
+std::pair<int, int> Crosshair::getCrosshairSpriteSize()
+{
+	return std::pair<int, int>(this->spriteWidth, this->spriteHeight);
+}

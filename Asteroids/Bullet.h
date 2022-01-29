@@ -19,6 +19,9 @@ public:
 	void update();
 	void draw();
 	~Bullet();
+	std::pair<float, float> getPos();
+	std::pair<int, int> getBulletSpriteSize();
+	void flip(int byX, int byY, std::pair<int, int> mapSize);
 	friend class Map;
 };
 

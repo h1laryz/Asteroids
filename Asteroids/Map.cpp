@@ -15,7 +15,6 @@ Map::Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight)
 	this->y = (windowHeight - spriteHeight * countHeight) / 2;
 
 	this->movementSpeed = 1;
-
 }
 
 Map::~Map()
@@ -96,7 +95,7 @@ void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*
 
 		for (size_t i = 0; i < bullets.size(); i++)
 		{
-			bullets[i]->y = this->y - xBefore + bullets[i]->y;
+			bullets[i]->y = this->y - yBefore + bullets[i]->y;
 		}
 	}
 }
@@ -118,19 +117,19 @@ void Map::flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, i
 	// left
 	if (byX == -1)
 	{
-		this->x = windowSize.first - spriteWidth * countWidth - this->x;
+		this->x = windowSize.first - mapWidth - this->x;
 		flipObjectsOnMap(asteroids, bullets, xBefore, yBefore, true, false);
 	}
 	// right
 	else if (byX == 1)
 	{
-		this->x = windowSize.first - spriteWidth * countWidth - this->x - 1;
+		this->x = windowSize.first - mapWidth - this->x - 1;
 		flipObjectsOnMap(asteroids, bullets, xBefore, yBefore, true, false);
 	}
 	// up & down
 	if (byY == -1 || byY == 1)
 	{
-		this->y = windowSize.second - spriteHeight * countHeight - this->y;
+		this->y = windowSize.second - mapHeight - this->y;
 		flipObjectsOnMap(asteroids, bullets, xBefore, yBefore, false, true);
 	}
 }

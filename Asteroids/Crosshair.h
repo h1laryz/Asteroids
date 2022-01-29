@@ -17,6 +17,6 @@ public:
 	void destroy();
 	void move();
 	std::pair<int, int> getPos();
-	std::pair<int, int> getPlayerSpriteSize();
+	std::pair<int, int> getCrosshairSpriteSize();
 };
 

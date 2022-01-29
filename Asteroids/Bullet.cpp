@@ -43,9 +43,45 @@ void Bullet::draw()
 	drawSprite(this->sprite, (int)this->x, (int)this->y);
 }
 
+
 Bullet::~Bullet()
 {
 	destroySprite(this->sprite);
+}
+
+std::pair<float, float> Bullet::getPos()
+{
+	return std::pair<float, float>(this->x, this->y);
+}
+
+std::pair<int, int> Bullet::getBulletSpriteSize()
+{
+	return std::pair<int, int>(this->spriteWidth, this->spriteHeight);
+}
+
+void Bullet::flip(int byX, int byY, std::pair<int, int> mapSize)
+{
+	// flip by left
+	if (byX == -1)
+	{
+		this->x += mapSize.first;
+	}
+	// flip by right
+	else if (byX == 1)
+	{
+		this->x -= mapSize.first;
+	}
+
+	// flip by up
+	if (byY == 1)
+	{
+		this->y += mapSize.second;
+	}
+	// flip by down
+	else if (byY == -1)
+	{
+		this->y -= mapSize.second;
+	}
 }
 
 
