@@ -218,6 +218,7 @@ void Game::spawnAsteroids()
 
 	for (size_t i = 0; i < this->asteroids.size(); i++)
 	{
+		this->asteroids[i]->update();
 		this->asteroids[i]->drawAsteroid();
 	}
 }

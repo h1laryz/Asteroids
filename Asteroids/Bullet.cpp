@@ -18,9 +18,12 @@ Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos)
 
 	this->speed = 1.0f;
 
+	std::cout << "aimdirnorm: " << this->aimDirNorm.first << ", " << this->aimDirNorm.second << std::endl;
+
 	this->currVelocity.first = this->aimDirNorm.first * this->speed;
 	this->currVelocity.second = this->aimDirNorm.second * this->speed;
 
+	std::cout << "currVelocity: " << this->currVelocity.first << ", " << this->currVelocity.second << std::endl;
 }
 
 void Bullet::move(std::vector<Bullet*> bullets, int dirX, int dirY, int movementSpeed)

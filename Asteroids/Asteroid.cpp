@@ -8,8 +8,13 @@ Asteroid::Asteroid()
 	this->x = 0;
 	this->y = 0;
 
-	this->dirX = rand() % 3 - 1;
-	this->dirY = rand() % 3 - 1;
+	this->dirXNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + rand() % 2 - 1;
+	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + rand() % 2 - 1;
+
+	this->movementSpeed = 1.0f;
+
+	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
+	this->currVelocity.second = this->dirYNorm * this->movementSpeed;
 
 	if (rand() % 2)
 	{
@@ -23,6 +28,8 @@ Asteroid::Asteroid()
 	}
 
 	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
+
+	std::cout << "norm ast: " << dirXNorm << ", " << dirYNorm << "\n";
 
 	count++;
 }
@@ -103,8 +110,13 @@ Asteroid::Asteroid(std::pair<int, int> pos, bool isSmall)
 	this->x = pos.first;
 	this->y = pos.second;
 
-	this->dirX = rand() % 3 - 1;
-	this->dirY = rand() % 3 - 1;
+	this->dirXNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + + rand() % 2 - 1;
+	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + + rand() % 2 - 1;
+
+	this->movementSpeed = 1.0f;
+
+	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
+	this->currVelocity.second = this->dirYNorm * this->movementSpeed;
 
 	this->isSmall = isSmall;
 
@@ -165,6 +177,12 @@ void Asteroid::destroy()
 int Asteroid::getCount()
 {
 	return count;
+}
+
+void Asteroid::update()
+{
+	this->x += this->currVelocity.first;
+	this->y += this->currVelocity.second;
 }
 
 std::pair<int, int> Asteroid::getPos()

@@ -10,9 +10,11 @@ private:
 	static int count;
 	Sprite* sprite;
 	int spriteWidth, spriteHeight;
-	int x, y;
-	int dirX, dirY;
+	float x, y;
+	float dirXNorm, dirYNorm;
+	std::pair<float, float> currVelocity;
 	bool isSmall;
+	float movementSpeed;
 
 	Asteroid();
 	void initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
@@ -29,6 +31,7 @@ public:
 	void destroy();
 	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed);
 	static int getCount();
+	void update();
 	std::pair<int, int> getPos();
 	friend class Map;
 };
