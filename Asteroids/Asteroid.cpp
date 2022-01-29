@@ -11,7 +11,7 @@ Asteroid::Asteroid()
 	this->dirXNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + rand() % 2 - 1;
 	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + rand() % 2 - 1;
 
-	this->movementSpeed = 1.0f;
+	this->movementSpeed = 0.3f;
 
 	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
 	this->currVelocity.second = this->dirYNorm * this->movementSpeed;

@@ -13,7 +13,7 @@ Game::Game()
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 1;
+	this->numOfAsteroids = 0;
 	this->abilityProbability = 0.2f;
 
 	// game objects
@@ -335,9 +335,17 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 	{
 	case FRMouseButton::LEFT:
 		if (isReleased)
+		{
+			if (bullets.size() == this->numOfBullets)
+			{
+				bullets[0]->~Bullet();
+				bullets.erase(bullets.begin());
+			}
 			bullets.push_back(this->player->shoot(std::pair<int, int>
-				(this->crosshair->getPos().first + this->crosshair->getCrosshairSpriteSize().first / 2, 
+				(this->crosshair->getPos().first + this->crosshair->getCrosshairSpriteSize().first / 2,
 					this->crosshair->getPos().second + this->crosshair->getCrosshairSpriteSize().second / 2)));
+		}
+			
 		break;
 	}
 }
