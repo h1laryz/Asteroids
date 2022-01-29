@@ -1,5 +1,4 @@
 #include "Asteroid.h"
-#include <iostream>
 
 int Asteroid::count = 0;
 
@@ -11,7 +10,7 @@ Asteroid::Asteroid()
 	this->dirXNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + rand() % 2 - 1;
 	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + rand() % 2 - 1;
 
-	this->movementSpeed = 0.3f;
+	this->movementSpeed = 0.4f;
 
 	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
 	this->currVelocity.second = this->dirYNorm * this->movementSpeed;
@@ -28,8 +27,6 @@ Asteroid::Asteroid()
 	}
 
 	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
-
-	std::cout << "norm ast: " << dirXNorm << ", " << dirYNorm << "\n";
 
 	count++;
 }
@@ -113,7 +110,7 @@ Asteroid::Asteroid(std::pair<int, int> pos, bool isSmall)
 	this->dirXNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + + rand() % 2 - 1;
 	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + + rand() % 2 - 1;
 
-	this->movementSpeed = 1.0f;
+	this->movementSpeed = 0.4f;
 
 	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
 	this->currVelocity.second = this->dirYNorm * this->movementSpeed;
