@@ -137,6 +137,7 @@ void Game::PreInit(int& width, int& height, bool& fullscreen)
 bool Game::Init() {
 	this->player = new Player(this->windowWidth, this->windowHeight);
 	this->map = new Map(this->mapWidth, this->mapHeight, this->windowWidth, this->windowHeight);
+	this->crosshair = new Crosshair(this->windowWidth, this->windowHeight);
 
 	this->mapWidth = this->map->getMapSize().first;
 	this->mapHeight = this->map->getMapSize().second;
@@ -154,8 +155,10 @@ bool Game::Tick() {
 	this->map->drawMap();
 	this->spawnAsteroids();
 	this->player->drawPlayer();
+	this->crosshair->draw();
 	this->checkKeys();
 	this->checkOutOfBounce();
+	this->updateAndDrawBullets();
 	return false;
 }
 
@@ -176,11 +179,17 @@ void Game::spawnAsteroids()
 }
 
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {
-
+	this->crosshair->update(x, y);
 }
 
 void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
+	switch (button)
+	{
+	case FRMouseButton::LEFT:
+		bullets.push_back(this->player->shoot(this->crosshair->getPos()));
 
+		break;
+	}
 }
 
 
@@ -221,6 +230,15 @@ void Game::checkKeys()
 	for (size_t i = 0; i < this->inputtedKeys.size(); i++)
 	{
 		this->move(this->inputtedKeys[i]);
+	}
+}
+
+void Game::updateAndDrawBullets()
+{
+	for (size_t i = 0; i < bullets.size(); i++)
+	{
+		bullets[i]->update();
+		bullets[i]->draw();
 	}
 }
 

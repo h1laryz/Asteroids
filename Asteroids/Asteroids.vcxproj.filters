@@ -28,6 +28,12 @@
     <Filter Include="Map">
       <UniqueIdentifier>{897b9b48-2f88-40b1-8be7-b44803c75981}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Crosshair">
+      <UniqueIdentifier>{61c9afff-abbd-4a87-b848-f2dae82ca097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bullet">
+      <UniqueIdentifier>{3ecbbfc0-376c-4778-9756-f5bd9740c0d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h">
@@ -45,6 +51,12 @@
     <ClInclude Include="Map.h">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="Crosshair.h">
+      <Filter>Crosshair</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -61,6 +73,12 @@
     </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Crosshair.cpp">
+      <Filter>Crosshair</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Bullet</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

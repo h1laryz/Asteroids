@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "Map.h"
 #include "Asteroid.h"
+#include "Crosshair.h"
+#include "Bullet.h"
 
 class Game : public Framework 
 {
@@ -13,7 +15,9 @@ private:
 	// game objects
 	Player* player;
 	Map* map;
+	Crosshair* crosshair;
 	std::vector<Asteroid*> asteroids;
+	std::vector<Bullet*> bullets;
 	// input
 	std::vector<FRKey> inputtedKeys;
 	// params
@@ -42,7 +46,7 @@ public:
 	virtual void onKeyPressed(FRKey k);
 	virtual void onKeyReleased(FRKey k);
 	virtual void checkKeys();
-	
+	void updateAndDrawBullets();
 	virtual const char* GetTitle() override;
 
 };

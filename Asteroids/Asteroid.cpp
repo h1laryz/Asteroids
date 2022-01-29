@@ -49,9 +49,6 @@ void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> pla
 		}
 
 	} while (collision);
-
-	std::cout << "Asteroid: " << this->x << " ; " << this->y << std::endl;
-	std::cout << "player pos: " << playerPos.first << " ; " << playerPos.second << std::endl;
 }
 
 bool Asteroid::checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize)

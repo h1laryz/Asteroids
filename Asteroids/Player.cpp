@@ -8,6 +8,8 @@ Player::Player(int windowWidth, int windowHeight)
 
 	this->x = (windowWidth - spriteWidth) / 2;
 	this->y = (windowHeight - spriteHeight) / 2;
+	std::cout << "player pos: " << this->x << " ; " << this->y << std::endl;
+
 	this->movementSpeed = 1;
 }
 
@@ -30,6 +32,11 @@ void Player::move(int dirX, int dirY)
 {
 	this->x = this->x + dirX * this->movementSpeed;
 	this->y = this->y + dirY * this->movementSpeed;
+}
+
+Bullet* Player::shoot(std::pair<int, int> crosshairPos)
+{
+	return new Bullet(std::pair<int,int>(this->x + this->spriteWidth / 2, this->y + this->spriteHeight / 2), crosshairPos);
 }
 
 std::pair<int, int> Player::getPos()
