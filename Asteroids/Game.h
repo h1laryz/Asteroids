@@ -48,7 +48,9 @@ private:
 	void checkPlayerOutOfBounds();
 	void checkBulletsOutOfBounds();
 	void spawnAsteroids();
-	void checkBulletHit();
+	void checkAllBulletsCollisions();
+	bool checkBulletHit(std::pair<float, float> bulletPos, std::pair<int, int> bulletSpriteSize, std::pair<int, int> asteroidPos, std::pair<int, int> asteroidSpriteSize);
+
 public:
 	Game();
 	Game(int argc, char** argv);

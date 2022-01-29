@@ -202,6 +202,7 @@ bool Game::Tick() {
 	this->checkKeys();
 	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
+	this->checkAllBulletsCollisions();
 	return false;
 }
 
@@ -219,6 +220,79 @@ void Game::spawnAsteroids()
 	{
 		this->asteroids[i]->drawAsteroid();
 	}
+}
+
+void Game::checkAllBulletsCollisions()
+{
+	for (size_t i = 0; i < bullets.size(); i++)
+	{
+		std::pair<float, float> bulletPos = bullets[i]->getPos();
+		std::pair<int, int> bulletSpriteSize = bullets[i]->getBulletSpriteSize();
+
+		for (size_t j = 0; j < asteroids.size(); j++)
+		{
+			std::pair<int, int> asteroidPos = asteroids[j]->getPos();
+			std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
+
+			if (this->checkBulletHit(bulletPos, bulletSpriteSize, asteroidPos, asteroidSpriteSize))
+			{
+				bullets[i]->~Bullet();
+				bullets.erase(bullets.begin() + i);
+
+				if (!asteroids[j]->getIsSmall())
+				{
+					std::pair<int, int> firstNewPos, secondNewPos;
+
+					// TODO: fix (may spawn behind map and teleport from another side)
+					do
+					{
+						firstNewPos.first = asteroids[j]->getPos().first + rand() % 40 - 20;
+						secondNewPos.first = asteroids[j]->getPos().first + rand() % 40 - 20;
+					} while (abs(firstNewPos.first - secondNewPos.first) < 15);
+
+					do
+					{
+						firstNewPos.second = asteroids[j]->getPos().second + rand() % 40 - 20;
+						secondNewPos.second = asteroids[j]->getPos().second + rand() % 40 - 20;
+					} while (abs(firstNewPos.second - secondNewPos.second) < 15);
+
+					Asteroid* first = new Asteroid(firstNewPos, true);
+					Asteroid* second = new Asteroid(secondNewPos, true);
+
+					asteroids.push_back(first);
+					asteroids.push_back(second);
+				}
+				asteroids[j]->~Asteroid();
+				asteroids.erase(asteroids.begin() + j);
+				i = 0;
+				break;
+			}
+		}
+	}
+}
+
+bool Game::checkBulletHit(std::pair<float, float> bulletPos, std::pair<int, int> bulletSpriteSize, std::pair<int, int> asteroidPos, std::pair<int, int> asteroidSpriteSize)
+{
+	bool xCollision = false;
+	bool yCollision = false;
+
+	if ((bulletPos.first >= asteroidPos.first && bulletPos.first <= asteroidPos.first + asteroidSpriteSize.first)
+		|| (bulletPos.first + bulletSpriteSize.first >= asteroidPos.first && bulletPos.first + bulletSpriteSize.first <= asteroidPos.first + asteroidSpriteSize.first)
+		|| (asteroidPos.first >= bulletPos.first && asteroidPos.first <= bulletPos.first + bulletSpriteSize.first)
+		|| (asteroidPos.first + asteroidSpriteSize.first >= bulletPos.first && asteroidPos.first + asteroidSpriteSize.first <= bulletPos.first + bulletSpriteSize.first))
+	{
+		xCollision = true;
+	}
+
+	if ((bulletPos.second >= asteroidPos.second && bulletPos.second <= asteroidPos.second + asteroidSpriteSize.second)
+		|| (bulletPos.second + bulletSpriteSize.second >= asteroidPos.second && bulletPos.second + bulletSpriteSize.second <= asteroidPos.second + asteroidSpriteSize.second)
+		|| (asteroidPos.second >= bulletPos.second && asteroidPos.second <= bulletPos.second + bulletSpriteSize.second)
+		|| (asteroidPos.second + asteroidSpriteSize.second >= bulletPos.second && asteroidPos.second + asteroidSpriteSize.second <= bulletPos.second + bulletSpriteSize.second))
+	{
+		yCollision = true;
+	}
+
+	return xCollision && yCollision;
 }
 
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {

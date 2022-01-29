@@ -98,7 +98,28 @@ bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
 }
 
 
-Asteroid::Asteroid(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize, 
+Asteroid::Asteroid(std::pair<int, int> pos, bool isSmall)
+{
+	this->x = pos.first;
+	this->y = pos.second;
+
+	this->dirX = rand() % 3 - 1;
+	this->dirY = rand() % 3 - 1;
+
+	this->isSmall = isSmall;
+
+	if (this->isSmall)
+		this->sprite = createSprite("..\\data\\small_asteroid.png");
+	else
+		this->sprite = createSprite("..\\data\\big_asteroid.png");
+
+
+	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
+
+	count++;
+}
+
+Asteroid::Asteroid(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
 	std::pair<int, int> mapSize, std::pair<int, int> mapPos) : Asteroid()
 {
 	this->initPos(asteroids, playerPos, playerSpriteSize, mapSize, mapPos);
@@ -144,6 +165,11 @@ void Asteroid::destroy()
 int Asteroid::getCount()
 {
 	return count;
+}
+
+std::pair<int, int> Asteroid::getPos()
+{
+	return std::pair<int, int>(this->x, this->y);
 }
 
 
