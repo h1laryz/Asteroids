@@ -23,6 +23,15 @@ Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos)
 
 }
 
+void Bullet::move(std::vector<Bullet*> bullets, int dirX, int dirY, int movementSpeed)
+{
+	for (size_t i = 0; i < bullets.size(); i++)
+	{
+		bullets[i]->x = bullets[i]->x + dirX * movementSpeed;
+		bullets[i]->y = bullets[i]->y + dirY * movementSpeed;
+	}
+}
+
 void Bullet::update()
 {
 	this->x += this->currVelocity.first;

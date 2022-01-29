@@ -81,21 +81,25 @@ void Game::move(FRKey k)
 	case FRKey::RIGHT:
 		this->map->move(-1, 0);
 		Asteroid::move(this->asteroids, -1, 0, this->map->getMovementSpeed());
+		Bullet::move(this->bullets, -1, 0, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::LEFT:
 		this->map->move(1, 0);
 		Asteroid::move(this->asteroids, 1, 0, this->map->getMovementSpeed());
+		Bullet::move(this->bullets, 1, 0, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::DOWN:
 		this->map->move(0, -1);
 		Asteroid::move(this->asteroids, 0, -1, this->map->getMovementSpeed());
+		Bullet::move(this->bullets, 0, -1, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::UP:
 		this->map->move(0, 1);
 		Asteroid::move(this->asteroids, 0, 1, this->map->getMovementSpeed());
+		Bullet::move(this->bullets, 0, 1, this->map->getMovementSpeed());
 		break;
 	}
 }
@@ -105,25 +109,25 @@ void Game::checkOutOfBounds()
 	// check left
 	if (this->player->getPos().first < this->map->getPos().first)
 	{
-		this->map->flip(asteroids, -1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, bullets, -1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 	// check right
 	else if (this->player->getPos().first + this->player->getPlayerSpriteSize().first 
 	> this->mapWidth + this->map->getPos().first)
 	{
-		this->map->flip(asteroids, 1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, bullets, 1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 
 	// check up
 	if (this->player->getPos().second < this->map->getPos().second)
 	{
-		this->map->flip(asteroids, 0, -1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, bullets, 0, -1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 	// check down
 	else if (this->player->getPos().second + this->player->getPlayerSpriteSize().second
 	> this->mapHeight + this->map->getPos().second)
 	{
-		this->map->flip(asteroids, 0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, bullets, 0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 }
 

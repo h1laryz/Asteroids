@@ -73,7 +73,7 @@ std::pair<int, int> Map::getPos()
 	return std::pair<int, int>(this->x, this->y);
 }
 
-void Map::flipAsteroids(std::vector<Asteroid*> asteroids, int xBefore, int yBefore, bool vertical, bool horisontal)
+void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, int xBefore, int yBefore, bool vertical, bool horisontal)
 {
 	if (vertical)
 	{
@@ -81,12 +81,22 @@ void Map::flipAsteroids(std::vector<Asteroid*> asteroids, int xBefore, int yBefo
 		{
 			asteroids[i]->x = this->x - xBefore + asteroids[i]->x;
 		}
+
+		for (size_t i = 0; i < bullets.size(); i++)
+		{
+			bullets[i]->x = this->x - xBefore + bullets[i]->x;
+		}
 	}
 	if (horisontal)
 	{
 		for (size_t i = 0; i < asteroids.size(); i++)
 		{
 			asteroids[i]->y = this->y - yBefore + asteroids[i]->y;
+		}
+
+		for (size_t i = 0; i < bullets.size(); i++)
+		{
+			bullets[i]->y = this->y - xBefore + bullets[i]->y;
 		}
 	}
 }
@@ -101,7 +111,7 @@ std::pair<int, int> Map::getMapSize()
 	return std::pair<int, int>(this->mapWidth, this->mapHeight);
 }
 
-void Map::flip(std::vector<Asteroid*> asteroids, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
+void Map::flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
 {
 	int xBefore = this->x;
 	int yBefore = this->y;
@@ -109,18 +119,18 @@ void Map::flip(std::vector<Asteroid*> asteroids, int byX, int byY, std::pair<int
 	if (byX == -1)
 	{
 		this->x = windowSize.first - spriteWidth * countWidth - this->x;
-		flipAsteroids(asteroids, xBefore, yBefore, true, false);
+		flipObjectsOnMap(asteroids, bullets, xBefore, yBefore, true, false);
 	}
 	// right
 	else if (byX == 1)
 	{
 		this->x = windowSize.first - spriteWidth * countWidth - this->x - 1;
-		flipAsteroids(asteroids, xBefore, yBefore, true, false);
+		flipObjectsOnMap(asteroids, bullets, xBefore, yBefore, true, false);
 	}
 	// up & down
 	if (byY == -1 || byY == 1)
 	{
 		this->y = windowSize.second - spriteHeight * countHeight - this->y;
-		flipAsteroids(asteroids, xBefore, yBefore, false, true);
+		flipObjectsOnMap(asteroids, bullets, xBefore, yBefore, false, true);
 	}
 }

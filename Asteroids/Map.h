@@ -3,6 +3,7 @@
 #include <utility>
 #include <vector>
 #include "Asteroid.h"
+#include "Bullet.h"
 
 class Map
 {
@@ -17,7 +18,7 @@ private:
 
 	// private methods
 	void calculateCountOfSprites(int mapWidth, int mapHeight);
-	void flipAsteroids(std::vector<Asteroid*> asteroids, int xBefore, int yBefore, bool vertical, bool horisontal);
+	void flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, int xBefore, int yBefore, bool vertical, bool horisontal);
 public:
 	Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight);
 	virtual ~Map();
@@ -26,7 +27,7 @@ public:
 	std::pair<int, int> getMapSize();
 	void destroy();
 	void move(int dirX, int dirY);
-	void flip(std::vector<Asteroid*> asteroids, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize);
+	void flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize);
 	std::pair<int, int> getPos();
 	std::pair<int, int> getCountSprites();
 	int getMovementSpeed();

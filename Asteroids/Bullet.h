@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include <vector>
 #include "Framework.h"
 
 class Bullet
@@ -14,8 +15,10 @@ private:
 	float speed;
 public:
 	Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos);
+	static void move(std::vector<Bullet*> bullets, int dirX, int dirY, int movementSpeed);
 	void update();
 	void draw();
 	~Bullet();
+	friend class Map;
 };
 
