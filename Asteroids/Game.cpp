@@ -187,7 +187,8 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 	switch (button)
 	{
 	case FRMouseButton::LEFT:
-		bullets.push_back(this->player->shoot(this->crosshair->getPos()));
+		if (isReleased)
+			bullets.push_back(this->player->shoot(this->crosshair->getPos()));
 		break;
 	}
 }
