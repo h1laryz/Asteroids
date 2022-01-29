@@ -1,4 +1,6 @@
+#include <math.h>
 #include "Bullet.h"
+#include <iostream>
 
 Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos)
 {
@@ -8,28 +10,28 @@ Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos)
 	this->x = playerPos.first;
 	this->y = playerPos.second;
 
-	this->finalX = crosshairPos.first;
-	this->finalY = crosshairPos.second;
+	this->aimDir.first = crosshairPos.first - playerPos.first;
+	this->aimDir.second = crosshairPos.second - playerPos.second;
 
-	this->speed = 1;
+	this->aimDirNorm.first = this->aimDir.first / sqrt(pow(this->aimDir.first, 2) + pow(this->aimDir.second, 2));
+	this->aimDirNorm.second = this->aimDir.second / sqrt(pow(this->aimDir.first, 2) + pow(this->aimDir.second, 2));
+
+	this->speed = 1.0f;
+
+	this->currVelocity.first = this->aimDirNorm.first * this->speed;
+	this->currVelocity.second = this->aimDirNorm.second * this->speed;
+
 }
 
 void Bullet::update()
 {
-	if (this->finalX > this->x) 
-		this->x = this->x + 1 * this->speed;
-	else if (this->finalX < this->x)
-		this->x = this->x - 1 * this->speed;
-
-	if (this->finalY > this->y)
-		this->y = this->y + 1 * this->speed;
-	else if (this->finalY < this->y)
-		this->y = this->y - 1 * this->speed;
+	this->x += this->currVelocity.first;
+	this->y += this->currVelocity.second;
 }
 
 void Bullet::draw()
 {
-	drawSprite(this->sprite, this->x, this->y);
+	drawSprite(this->sprite, (int)this->x, (int)this->y);
 }
 
 Bullet::~Bullet()

@@ -19,6 +19,7 @@ Game::Game()
 	// game objects
 	this->player = nullptr;
 	this->map = nullptr;
+	this->crosshair = nullptr;
 }
 
 Game::Game(int argc, char** argv) : Game()
@@ -99,7 +100,7 @@ void Game::move(FRKey k)
 	}
 }
 
-void Game::checkOutOfBounce()
+void Game::checkOutOfBounds()
 {
 	// check left
 	if (this->player->getPos().first < this->map->getPos().first)
@@ -157,7 +158,7 @@ bool Game::Tick() {
 	this->player->drawPlayer();
 	this->crosshair->draw();
 	this->checkKeys();
-	this->checkOutOfBounce();
+	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
 	return false;
 }
@@ -187,7 +188,6 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 	{
 	case FRMouseButton::LEFT:
 		bullets.push_back(this->player->shoot(this->crosshair->getPos()));
-
 		break;
 	}
 }

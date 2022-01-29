@@ -31,7 +31,7 @@ private:
 	bool fullscreen;
 
 	virtual void move(FRKey k);
-	void checkOutOfBounce();
+	void checkOutOfBounds();
 	void spawnAsteroids();
 public:
 	Game();
