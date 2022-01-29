@@ -13,7 +13,7 @@ Game::Game()
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 10;
+	this->numOfAsteroids = 60;
 	this->abilityProbability = 0.2f;
 
 	// game objects
@@ -165,7 +165,7 @@ void Game::spawnAsteroids()
 
 	for (size_t i = countOfAsteroids; i < numOfAsteroids; i++)
 	{
-		Asteroid* asteroid = new Asteroid(this->player->getPos(), this->player->getPlayerSpriteSize(), std::pair<int, int>(mapWidth, mapHeight), this->map->getPos());
+		Asteroid* asteroid = new Asteroid(asteroids, this->player->getPos(), this->player->getPlayerSpriteSize(), std::pair<int, int>(mapWidth, mapHeight), this->map->getPos());
 		this->asteroids.push_back(asteroid);
 	}
 

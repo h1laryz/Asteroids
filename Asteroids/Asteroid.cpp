@@ -1,4 +1,5 @@
 #include "Asteroid.h"
+#include <iostream>
 
 int Asteroid::count = 0;
 
@@ -20,15 +21,61 @@ Asteroid::Asteroid()
 		this->sprite = createSprite("..\\data\\small_asteroid.png");
 		this->isSmall = true;
 	}
+
+	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
+
 	count++;
 }
 
+void Asteroid::initPos()
+{
+}
 
-Asteroid::Asteroid(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize, 
+bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
+{
+	return false;
+}
+
+
+Asteroid::Asteroid(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize, 
 	std::pair<int, int> mapSize, std::pair<int, int> mapPos) : Asteroid()
 {
-	this->x = rand() % mapSize.first + mapPos.first;
-	this->y = rand() % mapSize.second + mapPos.second;
+
+	bool xCollision, yCollision;
+	do
+	{
+		xCollision = false;
+		yCollision = false;
+
+		this->x = rand() % (mapSize.first - this->spriteWidth) + mapPos.first;
+		this->y = rand() % (mapSize.second - this->spriteHeight) + mapPos.second;
+
+		for (size_t i = 0; i < asteroids.size(); i++)
+		{
+			xCollision = false;
+			yCollision = false;
+
+			if ((this->x >= asteroids[i]->x && this->x <= asteroids[i]->x + asteroids[i]->spriteWidth)
+				|| (this->x + this->spriteWidth >= asteroids[i]->x && this->x + this->spriteWidth <= asteroids[i]->x + asteroids[i]->spriteWidth)
+				|| (asteroids[i]->x >= this->x && asteroids[i]->x <= this->x + this->spriteWidth)
+				|| (asteroids[i]->x + asteroids[i]->spriteWidth >= this->x && asteroids[i]->x + asteroids[i]->spriteWidth <= this->x + this->spriteWidth))
+			{
+				xCollision = true;
+			}
+			
+			if ((this->y >= asteroids[i]->y && this->y <= asteroids[i]->y + asteroids[i]->spriteHeight)
+				|| (this->y + this->spriteHeight >= asteroids[i]->y && this->y + this->spriteHeight <= asteroids[i]->y + asteroids[i]->spriteHeight)
+				|| (asteroids[i]->y >= this->y && asteroids[i]->y <= this->y + this->spriteHeight)
+				|| (asteroids[i]->y + asteroids[i]->spriteHeight >= this->y && asteroids[i]->y + asteroids[i]->spriteHeight <= this->y + this->spriteHeight))
+			{
+				yCollision = true;
+			}
+			
+			if (xCollision && yCollision)
+				break;
+		}
+
+	} while (xCollision && yCollision);
 }
 
 Asteroid::~Asteroid()
@@ -57,9 +104,9 @@ void Asteroid::drawAsteroid()
 	drawSprite(this->sprite, this->x, this->y);
 }
 
-void Asteroid::getAsteroidSpriteSize(int& w, int& h)
+std::pair<int, int> Asteroid::getAsteroidSpriteSize()
 {
-	getSpriteSize(this->sprite, w, h);
+	return std::pair<int, int>(spriteWidth, spriteHeight);
 }
 
 void Asteroid::destroy()

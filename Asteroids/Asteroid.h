@@ -9,21 +9,23 @@ class Asteroid
 private:
 	static int count;
 	Sprite* sprite;
+	int spriteWidth, spriteHeight;
 	int x, y;
 	int dirX, dirY;
 	bool isSmall;
 
 	Asteroid();
+	void initPos();
+	static bool checkCollisions(Asteroid* first, Asteroid* second);
 public:
-	Asteroid(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize, std::pair<int, int> mapSize, std::pair<int, int> mapPos);
+	Asteroid(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize, std::pair<int, int> mapSize, std::pair<int, int> mapPos);
 	virtual ~Asteroid();
 	bool getIsSmall();
 	void drawAsteroid();
-	void getAsteroidSpriteSize(int& w, int& h);
+	std::pair<int, int> getAsteroidSpriteSize();
 	void destroy();
 	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed);
 	static int getCount();
-	void flipByMap(std::pair<int, int> mapPos);
 	friend class Map;
 };
 
