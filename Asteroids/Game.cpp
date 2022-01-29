@@ -8,12 +8,12 @@ Game::Game()
 	this->fullscreen = false;
 
 	// map
-	this->mapWidth = 600;
-	this->mapHeight = 600;
+	this->mapWidth = 500;
+	this->mapHeight = 500;
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 60;
+	this->numOfAsteroids = 25;
 	this->abilityProbability = 0.2f;
 
 	// game objects

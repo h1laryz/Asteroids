@@ -27,55 +27,85 @@ Asteroid::Asteroid()
 	count++;
 }
 
-void Asteroid::initPos()
+void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
+	std::pair<int, int> mapSize, std::pair<int, int> mapPos)
 {
+	bool collision = false;
+	do
+	{
+		collision = false;
+		do
+		{
+			this->x = rand() % (mapSize.first - this->spriteWidth) + mapPos.first;
+			this->y = rand() % (mapSize.second - this->spriteHeight) + mapPos.second;
+		} while (this->checkTooCloseToPlayer(playerPos, playerSpriteSize));
+		
+
+		for (size_t i = 0; i < asteroids.size(); i++)
+		{
+			collision = Asteroid::checkCollisions(this, asteroids[i]);
+			if (collision)
+				break;
+		}
+
+	} while (collision);
+
+	std::cout << "Asteroid: " << this->x << " ; " << this->y << std::endl;
+	std::cout << "player pos: " << playerPos.first << " ; " << playerPos.second << std::endl;
+}
+
+bool Asteroid::checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize)
+{
+	int range = 0;
+
+	if (this->isSmall) range = 70;
+	else range = 100;
+
+	std::pair<int, int> centerOfPlayer;
+	std::pair<int, int> centerOfAsteroid;
+
+	centerOfPlayer.first = playerPos.first + playerSpriteSize.first / 2;
+	centerOfPlayer.second = playerPos.second + playerSpriteSize.second / 2;
+
+	centerOfAsteroid.first = this->x + spriteWidth / 2;
+	centerOfAsteroid.second = this->y + spriteHeight / 2;
+
+	if (abs(this->x - centerOfPlayer.first) <= range || abs(this->y - centerOfPlayer.second) <= range)
+		return true;
+
+	return false;
 }
 
 bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
 {
-	return false;
+	bool xCollision = false;
+	bool yCollision = false;
+
+	if ((first->x >= second->x && first->x <= second->x + second->spriteWidth)
+		|| (first->x + first->spriteWidth >= second->x && first->x + first->spriteWidth <= second->x + second->spriteWidth)
+		|| (second->x >= first->x && second->x <= first->x + first->spriteWidth)
+		|| (second->x + second->spriteWidth >= first->x && second->x + second->spriteWidth <= first->x + first->spriteWidth))
+	{
+		xCollision = true;
+	}
+
+	if ((first->y >= second->y && first->y <= second->y + second->spriteHeight)
+		|| (first->y + first->spriteHeight >= second->y && first->y + first->spriteHeight <= second->y + second->spriteHeight)
+		|| (second->y >= first->y && second->y <= first->y + first->spriteHeight)
+		|| (second->y + second->spriteHeight >= first->y && second->y + second->spriteHeight <= first->y + first->spriteHeight))
+	{
+		yCollision = true;
+	}
+
+	return xCollision && yCollision;
 }
 
 
 Asteroid::Asteroid(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize, 
 	std::pair<int, int> mapSize, std::pair<int, int> mapPos) : Asteroid()
 {
-
-	bool xCollision, yCollision;
-	do
-	{
-		xCollision = false;
-		yCollision = false;
-
-		this->x = rand() % (mapSize.first - this->spriteWidth) + mapPos.first;
-		this->y = rand() % (mapSize.second - this->spriteHeight) + mapPos.second;
-
-		for (size_t i = 0; i < asteroids.size(); i++)
-		{
-			xCollision = false;
-			yCollision = false;
-
-			if ((this->x >= asteroids[i]->x && this->x <= asteroids[i]->x + asteroids[i]->spriteWidth)
-				|| (this->x + this->spriteWidth >= asteroids[i]->x && this->x + this->spriteWidth <= asteroids[i]->x + asteroids[i]->spriteWidth)
-				|| (asteroids[i]->x >= this->x && asteroids[i]->x <= this->x + this->spriteWidth)
-				|| (asteroids[i]->x + asteroids[i]->spriteWidth >= this->x && asteroids[i]->x + asteroids[i]->spriteWidth <= this->x + this->spriteWidth))
-			{
-				xCollision = true;
-			}
-			
-			if ((this->y >= asteroids[i]->y && this->y <= asteroids[i]->y + asteroids[i]->spriteHeight)
-				|| (this->y + this->spriteHeight >= asteroids[i]->y && this->y + this->spriteHeight <= asteroids[i]->y + asteroids[i]->spriteHeight)
-				|| (asteroids[i]->y >= this->y && asteroids[i]->y <= this->y + this->spriteHeight)
-				|| (asteroids[i]->y + asteroids[i]->spriteHeight >= this->y && asteroids[i]->y + asteroids[i]->spriteHeight <= this->y + this->spriteHeight))
-			{
-				yCollision = true;
-			}
-			
-			if (xCollision && yCollision)
-				break;
-		}
-
-	} while (xCollision && yCollision);
+	this->initPos(asteroids, playerPos, playerSpriteSize, mapSize, mapPos);
+	
 }
 
 Asteroid::~Asteroid()
