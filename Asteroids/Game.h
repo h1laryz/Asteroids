@@ -53,7 +53,7 @@ private:
 	void checkPlayerCollisions();
 	void restart();
 	bool checkBulletHit(std::pair<float, float> bulletPos, std::pair<int, int> bulletSpriteSize, std::pair<int, int> asteroidPos, std::pair<int, int> asteroidSpriteSize);
-
+	void inertia();
 public:
 	Game();
 	Game(int argc, char** argv);

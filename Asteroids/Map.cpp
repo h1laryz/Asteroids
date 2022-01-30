@@ -58,8 +58,52 @@ void Map::calculateCountOfSprites(int mapWidth, int mapHeight)
 
 void Map::move(int dirX, int dirY)
 {
-	this->x = this->x + dirX * this->movementSpeed;
-	this->y = this->y + dirY * this->movementSpeed;
+	if (dirX != 0)
+	{
+		this->velocityX = dirX;
+		this->x = this->x + this->velocityX * this->movementSpeed;
+	}
+	if (dirY != 0)
+	{
+		this->velocityY = dirY;
+		this->y = this->y + this->velocityY * this->movementSpeed;
+	}
+	
+	std::cout << "vel: " << this->velocityX << ", " << this->velocityY << std::endl;
+}
+
+void Map::updatePos(bool left, bool right, bool up, bool down)
+{
+	if (velocityX > 0 && !left)
+	{
+		this->velocityX -= 0.002f;
+		if (this->velocityX < 0)
+			this->velocityX = 0.0f;
+	}
+	else if (velocityX < 0 && !right)
+	{
+		this->velocityX += 0.002f;
+		if (this->velocityX > 0)
+			this->velocityX = 0.0f;
+	}
+
+	if (velocityY > 0 && !up)
+	{
+		this->velocityY -= 0.002f;
+		if (this->velocityY < 0)
+			this->velocityY = 0.0f;
+	}
+	else if (velocityY < 0 && !down)
+	{
+		this->velocityY += 0.002f;
+		if (this->velocityY > 0)
+			this->velocityY = 0.0f;
+	}
+
+	if (!left && !right)
+		this->x = this->x + this->velocityX * this->movementSpeed;
+	if (!up && !down)
+		this->y = this->y + this->velocityY * this->movementSpeed;
 }
 
 void Map::getMapSpriteSize(int& w, int& h)
@@ -67,9 +111,9 @@ void Map::getMapSpriteSize(int& w, int& h)
 	getSpriteSize(this->sprite, w, h);
 }
 
-std::pair<int, int> Map::getPos()
+std::pair<float, float> Map::getPos()
 {
-	return std::pair<int, int>(this->x, this->y);
+	return std::pair<float, float>(this->x, this->y);
 }
 
 void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, int xBefore, int yBefore, bool vertical, bool horisontal)

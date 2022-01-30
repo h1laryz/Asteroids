@@ -6,11 +6,10 @@ Player::Player(int windowWidth, int windowHeight)
 	this->sprite = createSprite("..\\data\\spaceship.png");
 	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
 
-	this->x = (windowWidth - spriteWidth) / 2;
-	this->y = (windowHeight - spriteHeight) / 2;
-	std::cout << "player pos: " << this->x << " ; " << this->y << std::endl;
+	this->x = static_cast<float>((windowWidth - spriteWidth)) / 2;
+	this->y = static_cast<float>((windowHeight - spriteHeight)) / 2;
 
-	this->movementSpeed = 1;
+	this->movementSpeed = 1.0f;
 }
 
 Player::~Player()
@@ -30,18 +29,41 @@ void Player::destroy()
 
 void Player::move(int dirX, int dirY)
 {
-	this->x = this->x + dirX * this->movementSpeed;
-	this->y = this->y + dirY * this->movementSpeed;
+	this->velocityX = dirX;
+	this->velocityY = dirY;
+	this->x = this->x + this->velocityX * this->movementSpeed;
+	this->y = this->y + this->velocityY * this->movementSpeed;
 }
+
+void Player::updatePos()
+{
+	if (velocityX < 0)
+	{
+		this->velocityX -= 0.00001f;
+		std::cout << "velocity x: " << this->velocityX << std::endl;
+	}
+	else if (velocityX > 0)
+		this->velocityX += 0.00001f;
+
+	if (velocityY < 0)
+		this->velocityY -= 0.00001f;
+	else if (velocityY > 0)
+		this->velocityY += 0.00001f;
+
+	this->x = this->x + this->velocityX * this->movementSpeed;
+	this->y = this->y + this->velocityY * this->movementSpeed;
+}
+
+
 
 Bullet* Player::shoot(std::pair<int, int> crosshairPos)
 {
 	return new Bullet(std::pair<int,int>(this->x + this->spriteWidth / 2, this->y + this->spriteHeight / 2), crosshairPos);
 }
 
-std::pair<int, int> Player::getPos()
+std::pair<float, float> Player::getPos()
 {
-	return std::pair<int, int>(this->x, this->y);
+	return std::pair<float, float>(this->x, this->y);
 }
 
 std::pair<int, int> Player::getPlayerSpriteSize()

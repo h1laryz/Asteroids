@@ -230,6 +230,7 @@ bool Game::Tick() {
 	this->player->drawPlayer();
 	this->crosshair->draw();
 	this->checkKeys();
+	this->inertia();
 	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
 	this->checkAllBulletsCollisions();
@@ -379,6 +380,36 @@ bool Game::checkBulletHit(std::pair<float, float> bulletPos, std::pair<int, int>
 	return xCollision && yCollision;
 }
 
+void Game::inertia()
+{
+	bool left = false,
+		right = false,
+		up = false, 
+		down = false;
+	for (size_t i = 0; i < this->inputtedKeys.size(); i++)
+	{
+		switch (inputtedKeys[i])
+		{
+		case FRKey::RIGHT:
+			right = true;
+			break;
+
+		case FRKey::LEFT:
+			left = true;
+			break;
+
+		case FRKey::DOWN:
+			down = true;
+			break;
+
+		case FRKey::UP:
+			up = true;
+			break;
+		}
+	}
+	this->map->updatePos(left, right, up, down);
+}
+
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {
 	this->crosshair->update(x, y);
 }
@@ -432,7 +463,6 @@ void Game::onKeyReleased(FRKey k) {
 			this->inputtedKeys.erase(this->inputtedKeys.begin() + i);
 		}
 	}
-	
 }
 
 void Game::checkKeys()
