@@ -13,7 +13,7 @@ Game::Game()
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 1;
+	this->numOfAsteroids = 0;
 	this->abilityProbability = 0.2f;
 
 	// game objects
@@ -229,8 +229,8 @@ bool Game::Tick() {
 	this->spawnAsteroids();
 	this->player->drawPlayer();
 	this->crosshair->draw();
-	this->checkKeys();
 	this->inertia();
+	this->checkKeys();
 	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
 	this->checkAllBulletsCollisions();
@@ -407,7 +407,7 @@ void Game::inertia()
 			break;
 		}
 	}
-	this->map->updatePos(left, right, up, down);
+	this->map->updatePos(left, right, up, down, asteroids, bullets);
 }
 
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {

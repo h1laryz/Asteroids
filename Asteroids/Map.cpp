@@ -72,7 +72,7 @@ void Map::move(int dirX, int dirY)
 	std::cout << "vel: " << this->velocityX << ", " << this->velocityY << std::endl;
 }
 
-void Map::updatePos(bool left, bool right, bool up, bool down)
+void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets)
 {
 	if (velocityX > 0 && !left)
 	{
@@ -101,9 +101,29 @@ void Map::updatePos(bool left, bool right, bool up, bool down)
 	}
 
 	if (!left && !right)
+	{
 		this->x = this->x + this->velocityX * this->movementSpeed;
+		for (size_t i = 0; i < asteroids.size(); i++)
+		{
+			asteroids[i]->x = asteroids[i]->x + this->velocityX * this->movementSpeed;
+		}
+		for (size_t i = 0; i < bullets.size(); i++)
+		{
+			bullets[i]->x = bullets[i]->x + this->velocityX * this->movementSpeed;
+		}
+	}
 	if (!up && !down)
+	{
 		this->y = this->y + this->velocityY * this->movementSpeed;
+		for (size_t i = 0; i < asteroids.size(); i++)
+		{
+			asteroids[i]->y = asteroids[i]->y + this->velocityY * this->movementSpeed;
+		}
+		for (size_t i = 0; i < bullets.size(); i++)
+		{
+			bullets[i]->y = bullets[i]->y + this->velocityY * this->movementSpeed;
+		}
+	}
 }
 
 void Map::getMapSpriteSize(int& w, int& h)
