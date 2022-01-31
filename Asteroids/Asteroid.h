@@ -17,6 +17,8 @@ private:
 	float movementSpeed;
 
 	Asteroid();
+	Asteroid(bool isSmall);
+
 	void initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
 		std::pair<int, int> mapSize, std::pair<int, int> mapPos);
 	bool checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize);
@@ -35,6 +37,7 @@ public:
 	static int getCount();
 	void update();
 	std::pair<int, int> getPos();
+	std::pair<Asteroid*, Asteroid*> split();
 	friend class Map;
 };
 

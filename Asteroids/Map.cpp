@@ -74,28 +74,29 @@ void Map::move(int dirX, int dirY)
 
 void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets)
 {
+	float difference = 0.004f;
 	if (velocityX > 0 && !left)
 	{
-		this->velocityX -= 0.002f;
+		this->velocityX -= difference;
 		if (this->velocityX < 0)
 			this->velocityX = 0.0f;
 	}
 	else if (velocityX < 0 && !right)
 	{
-		this->velocityX += 0.002f;
+		this->velocityX += difference;
 		if (this->velocityX > 0)
 			this->velocityX = 0.0f;
 	}
 
 	if (velocityY > 0 && !up)
 	{
-		this->velocityY -= 0.002f;
+		this->velocityY -= difference;
 		if (this->velocityY < 0)
 			this->velocityY = 0.0f;
 	}
 	else if (velocityY < 0 && !down)
 	{
-		this->velocityY += 0.002f;
+		this->velocityY += difference;
 		if (this->velocityY > 0)
 			this->velocityY = 0.0f;
 	}

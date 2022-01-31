@@ -13,7 +13,7 @@ Game::Game()
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 0;
+	this->numOfAsteroids = 10;
 	this->abilityProbability = 0.2f;
 
 	// game objects
@@ -234,7 +234,8 @@ bool Game::Tick() {
 	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
 	this->checkAllBulletsCollisions();
-	this->checkPlayerCollisions();
+	//this->checkPlayerCollisions();
+	this->checkAsteroidsCollisions();
 	return false;
 }
 
@@ -252,6 +253,23 @@ void Game::spawnAsteroids()
 	{
 		this->asteroids[i]->update();
 		this->asteroids[i]->drawAsteroid();
+	}
+}
+
+void Game::checkAsteroidsCollisions()
+{
+	for (size_t i = 0; i < asteroids.size(); i++)
+	{
+		for (size_t j = 1; j < asteroids.size(); j++)
+		{
+			if (i != j)
+			{
+				if (Asteroid::checkCollisions(asteroids[i], asteroids[j])) 
+				{
+					//Asteroid::brownianMotion(asteroids[i], asteroids[j]);
+				}
+			}
+		}
 	}
 }
 
@@ -274,26 +292,11 @@ void Game::checkAllBulletsCollisions()
 
 				if (!asteroids[j]->getIsSmall())
 				{
-					std::pair<int, int> firstNewPos, secondNewPos;
+					auto newAsteroids = asteroids[j]->split();
 
-					// TODO: fix (may spawn behind map and teleport from another side)
-					do
-					{
-						firstNewPos.first = asteroids[j]->getPos().first + rand() % 40 - 20;
-						secondNewPos.first = asteroids[j]->getPos().first + rand() % 40 - 20;
-					} while (abs(firstNewPos.first - secondNewPos.first) < 15);
-
-					do
-					{
-						firstNewPos.second = asteroids[j]->getPos().second + rand() % 40 - 20;
-						secondNewPos.second = asteroids[j]->getPos().second + rand() % 40 - 20;
-					} while (abs(firstNewPos.second - secondNewPos.second) < 15);
-
-					Asteroid* first = new Asteroid(firstNewPos, true);
-					Asteroid* second = new Asteroid(secondNewPos, true);
-
-					asteroids.push_back(first);
-					asteroids.push_back(second);
+					
+					asteroids.push_back(newAsteroids.first);
+					asteroids.push_back(newAsteroids.second);
 				}
 				asteroids[j]->~Asteroid();
 				asteroids.erase(asteroids.begin() + j);
@@ -307,7 +310,7 @@ void Game::checkAllBulletsCollisions()
 void Game::checkPlayerCollisions()
 {
 	std::pair<int, int> playerPos = player->getPos();
-	std::pair<int, int> bulletSpriteSize = player->getPlayerSpriteSize();
+	std::pair<int, int> playerSpriteSize = player->getPlayerSpriteSize();
 
 	for (size_t j = 0; j < asteroids.size(); j++)
 	{
@@ -318,17 +321,17 @@ void Game::checkPlayerCollisions()
 		bool yCollision = false;
 
 		if ((playerPos.first >= asteroidPos.first && playerPos.first <= asteroidPos.first + asteroidSpriteSize.first)
-			|| (playerPos.first + bulletSpriteSize.first >= asteroidPos.first && playerPos.first + bulletSpriteSize.first <= asteroidPos.first + asteroidSpriteSize.first)
-			|| (asteroidPos.first >= playerPos.first && asteroidPos.first <= playerPos.first + bulletSpriteSize.first)
-			|| (asteroidPos.first + asteroidSpriteSize.first >= playerPos.first && asteroidPos.first + asteroidSpriteSize.first <= playerPos.first + bulletSpriteSize.first))
+			|| (playerPos.first + playerSpriteSize.first >= asteroidPos.first && playerPos.first + playerSpriteSize.first <= asteroidPos.first + asteroidSpriteSize.first)
+			|| (asteroidPos.first >= playerPos.first && asteroidPos.first <= playerPos.first + playerSpriteSize.first)
+			|| (asteroidPos.first + asteroidSpriteSize.first >= playerPos.first && asteroidPos.first + asteroidSpriteSize.first <= playerPos.first + playerSpriteSize.first))
 		{
 			xCollision = true;
 		}
 
 		if ((playerPos.second >= asteroidPos.second && playerPos.second <= asteroidPos.second + asteroidSpriteSize.second)
-			|| (playerPos.second + bulletSpriteSize.second >= asteroidPos.second && playerPos.second + bulletSpriteSize.second <= asteroidPos.second + asteroidSpriteSize.second)
-			|| (asteroidPos.second >= playerPos.second && asteroidPos.second <= playerPos.second + bulletSpriteSize.second)
-			|| (asteroidPos.second + asteroidSpriteSize.second >= playerPos.second && asteroidPos.second + asteroidSpriteSize.second <= playerPos.second + bulletSpriteSize.second))
+			|| (playerPos.second + playerSpriteSize.second >= asteroidPos.second && playerPos.second + playerSpriteSize.second <= asteroidPos.second + asteroidSpriteSize.second)
+			|| (asteroidPos.second >= playerPos.second && asteroidPos.second <= playerPos.second + playerSpriteSize.second)
+			|| (asteroidPos.second + asteroidSpriteSize.second >= playerPos.second && asteroidPos.second + asteroidSpriteSize.second <= playerPos.second + playerSpriteSize.second))
 		{
 			yCollision = true;
 		}

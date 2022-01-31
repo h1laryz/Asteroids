@@ -49,6 +49,7 @@ private:
 	void checkBulletsOutOfBounds();
 	void checkAsteroidsOutOfBounds();
 	void spawnAsteroids();
+	void checkAsteroidsCollisions();
 	void checkAllBulletsCollisions();
 	void checkPlayerCollisions();
 	void restart();

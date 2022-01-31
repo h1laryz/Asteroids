@@ -120,6 +120,32 @@ bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
 	return xCollision && yCollision;
 }
 
+Asteroid::Asteroid(bool isSmall)
+{
+	this->x = 0;
+	this->y = 0;
+
+	this->dirXNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + +rand() % 2 - 1;
+	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + +rand() % 2 - 1;
+
+	this->movementSpeed = 0.4f;
+
+	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
+	this->currVelocity.second = this->dirYNorm * this->movementSpeed;
+
+	this->isSmall = isSmall;
+
+	if (this->isSmall)
+		this->sprite = createSprite("..\\data\\small_asteroid.png");
+	else
+		this->sprite = createSprite("..\\data\\big_asteroid.png");
+
+
+	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
+
+	count++;
+}
+
 
 Asteroid::Asteroid(std::pair<int, int> pos, bool isSmall)
 {
@@ -185,29 +211,29 @@ void Asteroid::brownianMotion(Asteroid* first, Asteroid* second)
 	std::pair<float, float> firstVelocity = first->currVelocity;
 	std::pair<float, float> secondVelocity = second->currVelocity;
 
-	if (firstVelocity.first > secondVelocity.first)
-	{
-		secondVelocity.first = second->currVelocity.first + (fabs(first->currVelocity.first) - fabs(second->currVelocity.first));
-		//firstVelocity.first = first->currVelocity.first - fabs(second->currVelocity.first);
-	}
-	else if (firstVelocity.first < secondVelocity.first)
-	{
-		firstVelocity.first = first->currVelocity.first + (fabs(first->currVelocity.first) - fabs(second->currVelocity.first));
-		//secondVelocity.first = second->currVelocity.first - fabs(first->currVelocity.first);
-	}
+	//if (firstVelocity.first > secondVelocity.first)
+	//{
+	//	secondVelocity.first = second->currVelocity.first + (fabs(first->currVelocity.first) - fabs(second->currVelocity.first));
+	//	//firstVelocity.first = first->currVelocity.first - fabs(second->currVelocity.first);
+	//}
+	//else if (firstVelocity.first < secondVelocity.first)
+	//{
+	//	firstVelocity.first = first->currVelocity.first + (fabs(first->currVelocity.first) - fabs(second->currVelocity.first));
+	//	//secondVelocity.first = second->currVelocity.first - fabs(first->currVelocity.first);
+	//}
 
-	if (firstVelocity.second > secondVelocity.second)
-	{
-		//firstVelocity.second = first->currVelocity.second - fabs(second->currVelocity.second);
-		secondVelocity.second = second->currVelocity.second + (fabs(first->currVelocity.second) - fabs(second->currVelocity.second));
-	}
-	else if (firstVelocity.second < secondVelocity.second)
-	{
-		//secondVelocity.second = second->currVelocity.second - fabs(first->currVelocity.second);
-		firstVelocity.second = second->currVelocity.second + (fabs(first->currVelocity.second) - fabs(second->currVelocity.second));
-	}
-	first->currVelocity = firstVelocity;
-	second->currVelocity = secondVelocity;
+	//if (firstVelocity.second > secondVelocity.second)
+	//{
+	//	//firstVelocity.second = first->currVelocity.second - fabs(second->currVelocity.second);
+	//	secondVelocity.second = second->currVelocity.second + (fabs(first->currVelocity.second) - fabs(second->currVelocity.second));
+	//}
+	//else if (firstVelocity.second < secondVelocity.second)
+	//{
+	//	//secondVelocity.second = second->currVelocity.second - fabs(first->currVelocity.second);
+	//	firstVelocity.second = second->currVelocity.second + (fabs(first->currVelocity.second) - fabs(second->currVelocity.second));
+	//}
+	first->currVelocity = secondVelocity;
+	second->currVelocity = firstVelocity;
 }
 
 
@@ -261,6 +287,42 @@ void Asteroid::update()
 std::pair<int, int> Asteroid::getPos()
 {
 	return std::pair<int, int>(this->x, this->y);
+}
+
+std::pair<Asteroid*, Asteroid*> Asteroid::split()
+{
+	if (this->isSmall)
+		return std::pair<Asteroid*, Asteroid*>(nullptr, nullptr);
+
+	std::pair<int, int> firstNewPos, secondNewPos;
+	Asteroid* first = new Asteroid(true);
+	Asteroid* second = new Asteroid(true);
+
+	// TODO: fix (may spawn behind map and teleport from another side)
+
+	if (rand() % 2)
+	{
+		first->x = this->x + first->spriteWidth / 2;
+		second->x = this->x - second->spriteWidth / 2 - 2;
+	}
+	else
+	{
+		first->x = this->x - first->spriteWidth / 2 - 2;
+		second->x = this->x + second->spriteWidth / 2;
+	}
+
+	if (rand() % 2)
+	{
+		first->y = this->y + first->spriteHeight / 2;
+		second->y = this->y - second->spriteHeight / 2 - 2;
+	}
+	else
+	{
+		first->y = this->y - first->spriteHeight / 2 - 2;
+		second->y = this->y + second->spriteHeight / 2;
+	}
+
+	return std::pair<Asteroid*, Asteroid*>(first, second);
 }
 
 
