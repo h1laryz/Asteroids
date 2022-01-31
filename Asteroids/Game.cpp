@@ -215,7 +215,7 @@ bool Game::Init() {
 	this->player = new Player(this->windowWidth, this->windowHeight);
 	this->map = new Map(this->mapWidth, this->mapHeight, this->windowWidth, this->windowHeight);
 	this->crosshair = new Crosshair(this->windowWidth, this->windowHeight);
-
+	this->shield = new Shield;
 	this->mapWidth = this->map->getMapSize().first;
 	this->mapHeight = this->map->getMapSize().second;
 
@@ -232,15 +232,14 @@ bool Game::Tick() {
 	this->map->drawMap();
 	this->spawnAsteroids();
 	this->drawUpgrades();
+	this->updateUpgrade();
 	this->player->drawPlayer();
 	this->crosshair->draw();
 	this->inertia();
 	this->checkKeys();
 	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
-	this->updateUpgrade();
 	this->checkAllBulletsCollisions();
-	//this->checkPlayerCollisions();
 	this->checkUpgradeBeingTaken();
 	this->checkAsteroidsCollisions();
 	return false;
@@ -309,7 +308,7 @@ void Game::checkAllBulletsCollisions()
 					upgradePos.first = asteroids[j]->getPos().first + asteroids[j]->getAsteroidSpriteSize().first / 2;
 					upgradePos.second = asteroids[j]->getPos().second + asteroids[j]->getAsteroidSpriteSize().second / 2;
 
-					Upgrade* upgrade = new Shield(upgradePos);
+					Upgrade* upgrade = new Upgrade(upgradePos);
 					this->upgrades.push_back(upgrade);
 				}
 				asteroids[j]->~Asteroid();
@@ -474,7 +473,18 @@ void Game::checkUpgradeBeingTaken()
 		auto upgradeSpriteSize = upgrades[i]->getUpgradeSpriteSize();
 		if (checkCollisions(playerPos, playerSpriteSize, upgradePos, upgradeSpriteSize))
 		{
+			if (this->activatedUpgrade != nullptr)
+				this->activatedUpgrade->~Upgrade();
+
 			this->activatedUpgrade = upgrades[i];
+			this->isShieldActivated = false;
+			auto newPos = std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2, this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2);
+			if (this->activatedUpgrade->getUpgradeName() == "shield")
+			{
+				isShieldActivated = true;
+				startUpgradeTime = getTickCount();
+			}
+			
 			this->upgrades.erase(this->upgrades.begin() + i);
 			i = 0;
 		}
@@ -484,9 +494,19 @@ void Game::checkUpgradeBeingTaken()
 void Game::updateUpgrade()
 {
 	auto newPos = std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2, this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2);
-	if (activatedUpgrade != nullptr)
+	if (isShieldActivated)
 	{
-		this->activatedUpgrade->activate(newPos);
+		if ((getTickCount() - startUpgradeTime) / 1000 < this->upgradeSecondsDuration)
+		{
+			shield->updatePos(newPos);
+			shield->draw();
+		}
+		else
+		{
+			isShieldActivated = false;
+			this->activatedUpgrade->~Upgrade();
+			this->activatedUpgrade = nullptr;
+		}
 	}
 }
 
@@ -495,10 +515,6 @@ void Game::drawUpgrades()
 	for (size_t i = 0; i < this->upgrades.size(); i++)
 	{
 		this->upgrades[i]->draw();
-	}
-	if (activatedUpgrade != nullptr)
-	{
-		activatedUpgrade->draw();
 	}
 }
 

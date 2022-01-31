@@ -1,29 +1,27 @@
 #include "Upgrade.h"
 
-//Upgrade::Upgrade()
-//{
-//	/*int random = rand() % 3;
-//	if (random == 0)
-//	{
-//
-//	}
-//	else if (random == 1)
-//	{
-//
-//	}
-//	else if (random == 2)
-//	{
-//
-//	}*/
-//
-//	this->sprite = createSprite("..\\data\\shield.png");
-//	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
-//}
-
-void Upgrade::updateSprite(const char* path)
+Upgrade::Upgrade()
 {
-	this->sprite = createSprite(path);
+	int random = rand() % 3;
+	if (random == 0)
+	{
+		this->sprite = createSprite("..\\data\\shield.png");
+	}
+	else if (random == 1)
+	{
+
+	}
+	else if (random == 2)
+	{
+
+	}
+
 	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
+}
+
+std::string Upgrade::getUpgradeName()
+{
+	return upgradeName;
 }
 
 void Upgrade::move(std::vector<Upgrade*> upgrades, int dirX, int dirY, int movementSpeed)
@@ -37,17 +35,10 @@ void Upgrade::move(std::vector<Upgrade*> upgrades, int dirX, int dirY, int movem
 
 Upgrade::Upgrade(std::pair<float, float> pos)
 {
+	this->upgradeName = "shield";
 	this->sprite = createSprite("..\\data\\shield.png");
 	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
 
-	this->x = pos.first - this->spriteWidth / 2;
-	this->y = pos.second - this->spriteHeight / 2;
-}
-
-Upgrade::Upgrade(std::pair<float, float> pos, const char* path)
-{
-	this->sprite = createSprite(path);
-	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
 	this->x = pos.first - this->spriteWidth / 2;
 	this->y = pos.second - this->spriteHeight / 2;
 }
@@ -61,11 +52,6 @@ void Upgrade::draw()
 {
 	if (this->sprite != nullptr)
 		drawSprite(this->sprite, this->x, this->y);
-}
-
-void Upgrade::activate(std::pair<float, float> pos)
-{
-
 }
 
 std::pair<float, float> Upgrade::getPos()

@@ -40,7 +40,6 @@ void Player::updatePos()
 	if (velocityX < 0)
 	{
 		this->velocityX -= 0.00001f;
-		std::cout << "velocity x: " << this->velocityX << std::endl;
 	}
 	else if (velocityX > 0)
 		this->velocityX += 0.00001f;

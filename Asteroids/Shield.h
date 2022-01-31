@@ -1,15 +1,17 @@
 #pragma once
-//#include <utility>
-//#include <vector>
-//#include "Framework.h"
+#include <utility>
+#include <vector>
+#include "Framework.h"
 
-#include "Upgrade.h"
-
-class Shield : public Upgrade
+class Shield 
 {
+	Sprite* sprite;
+	float x, y;
+	int spriteWidth, spriteHeight;
 public:
-	Shield(std::pair<float, float> pos);
-	void activate(std::pair<float, float> pos) override;
+	Shield();
 	~Shield();
+	void draw();
+	void updatePos(std::pair<float, float> newPos);
 };
 

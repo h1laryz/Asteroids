@@ -68,8 +68,6 @@ void Map::move(int dirX, int dirY)
 		this->velocityY = dirY;
 		this->y = this->y + this->velocityY * this->movementSpeed;
 	}
-	
-	std::cout << "vel: " << this->velocityX << ", " << this->velocityY << std::endl;
 }
 
 void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Upgrade*> upgrades)

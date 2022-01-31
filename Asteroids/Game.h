@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <chrono>
 #include "Framework.h"
 #include "Player.h"
 #include "Map.h"
@@ -22,6 +23,10 @@ private:
 	std::vector<Bullet*> bullets;
 	std::vector<Upgrade*> upgrades;
 	Upgrade* activatedUpgrade;
+	Shield* shield;
+	bool isShieldActivated;
+	unsigned int startUpgradeTime;
+	unsigned int upgradeSecondsDuration = 6;
 	// input
 	std::vector<FRKey> inputtedKeys;
 	// params
