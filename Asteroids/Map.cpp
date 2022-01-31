@@ -72,7 +72,7 @@ void Map::move(int dirX, int dirY)
 	std::cout << "vel: " << this->velocityX << ", " << this->velocityY << std::endl;
 }
 
-void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets)
+void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Upgrade*> upgrades)
 {
 	float difference = 0.004f;
 	if (velocityX > 0 && !left)
@@ -112,6 +112,10 @@ void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Aster
 		{
 			bullets[i]->x = bullets[i]->x + this->velocityX * this->movementSpeed;
 		}
+		for (size_t i = 0; i < upgrades.size(); i++)
+		{
+			upgrades[i]->x = upgrades[i]->x + this->velocityX * this->movementSpeed;
+		}
 	}
 	if (!up && !down)
 	{
@@ -123,6 +127,10 @@ void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Aster
 		for (size_t i = 0; i < bullets.size(); i++)
 		{
 			bullets[i]->y = bullets[i]->y + this->velocityY * this->movementSpeed;
+		}
+		for (size_t i = 0; i < upgrades.size(); i++)
+		{
+			upgrades[i]->y = upgrades[i]->y + this->velocityY * this->movementSpeed;
 		}
 	}
 }

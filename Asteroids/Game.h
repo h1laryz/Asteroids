@@ -8,6 +8,8 @@
 #include "Asteroid.h"
 #include "Crosshair.h"
 #include "Bullet.h"
+#include "Upgrade.h"
+#include "Shield.h"
 
 class Game : public Framework 
 {
@@ -18,6 +20,7 @@ private:
 	Crosshair* crosshair;
 	std::vector<Asteroid*> asteroids;
 	std::vector<Bullet*> bullets;
+	std::vector<Upgrade*> upgrades;
 	// input
 	std::vector<FRKey> inputtedKeys;
 	// params
@@ -40,7 +43,7 @@ private:
 	void onKeyPressed(FRKey k) override;
 	void onKeyReleased(FRKey k) override;
 
-
+	void drawUpgrades();
 	void checkKeys();
 	void updateAndDrawBullets();
 	void move(FRKey k);

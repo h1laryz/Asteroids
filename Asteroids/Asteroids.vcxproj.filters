@@ -34,6 +34,12 @@
     <Filter Include="Bullet">
       <UniqueIdentifier>{3ecbbfc0-376c-4778-9756-f5bd9740c0d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Upgrades">
+      <UniqueIdentifier>{eda023f9-f964-4cb2-96a7-9774ed69b79b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Upgrades\Shield">
+      <UniqueIdentifier>{e89d0d64-63ba-4d7b-851d-d3bbb9508bf5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h">
@@ -57,6 +63,12 @@
     <ClInclude Include="Bullet.h">
       <Filter>Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="Upgrade.h">
+      <Filter>Upgrades</Filter>
+    </ClInclude>
+    <ClInclude Include="Shield.h">
+      <Filter>Upgrades\Shield</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -79,6 +91,12 @@
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Upgrade.cpp">
+      <Filter>Upgrades</Filter>
+    </ClCompile>
+    <ClCompile Include="Shield.cpp">
+      <Filter>Upgrades\Shield</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

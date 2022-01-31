@@ -82,24 +82,28 @@ void Game::move(FRKey k)
 		this->map->move(-1, 0);
 		Asteroid::move(this->asteroids, -1, 0, this->map->getMovementSpeed());
 		Bullet::move(this->bullets, -1, 0, this->map->getMovementSpeed());
+		Upgrade::move(this->upgrades, -1, 0, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::LEFT:
 		this->map->move(1, 0);
 		Asteroid::move(this->asteroids, 1, 0, this->map->getMovementSpeed());
 		Bullet::move(this->bullets, 1, 0, this->map->getMovementSpeed());
+		Upgrade::move(this->upgrades, 1, 0, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::DOWN:
 		this->map->move(0, -1);
 		Asteroid::move(this->asteroids, 0, -1, this->map->getMovementSpeed());
 		Bullet::move(this->bullets, 0, -1, this->map->getMovementSpeed());
+		Upgrade::move(this->upgrades, 0, -1, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::UP:
 		this->map->move(0, 1);
 		Asteroid::move(this->asteroids, 0, 1, this->map->getMovementSpeed());
 		Bullet::move(this->bullets, 0, 1, this->map->getMovementSpeed());
+		Upgrade::move(this->upgrades, 0, 1, this->map->getMovementSpeed());
 		break;
 	}
 }
@@ -229,6 +233,7 @@ bool Game::Tick() {
 	this->spawnAsteroids();
 	this->player->drawPlayer();
 	this->crosshair->draw();
+	this->drawUpgrades();
 	this->inertia();
 	this->checkKeys();
 	this->checkOutOfBounds();
@@ -293,10 +298,17 @@ void Game::checkAllBulletsCollisions()
 				if (!asteroids[j]->getIsSmall())
 				{
 					auto newAsteroids = asteroids[j]->split();
-
-					
 					asteroids.push_back(newAsteroids.first);
 					asteroids.push_back(newAsteroids.second);
+				}
+				if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) <= this->abilityProbability)
+				{
+					std::pair<float, float> upgradePos;
+					upgradePos.first = asteroids[j]->getPos().first + asteroids[j]->getAsteroidSpriteSize().first / 2;
+					upgradePos.second = asteroids[j]->getPos().second + asteroids[j]->getAsteroidSpriteSize().second / 2;
+
+					Upgrade* upgrade = new Upgrade(upgradePos);
+					this->upgrades.push_back(upgrade);
 				}
 				asteroids[j]->~Asteroid();
 				asteroids.erase(asteroids.begin() + j);
@@ -410,7 +422,7 @@ void Game::inertia()
 			break;
 		}
 	}
-	this->map->updatePos(left, right, up, down, asteroids, bullets);
+	this->map->updatePos(left, right, up, down, asteroids, bullets, upgrades);
 }
 
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {
@@ -465,6 +477,14 @@ void Game::onKeyReleased(FRKey k) {
 		{
 			this->inputtedKeys.erase(this->inputtedKeys.begin() + i);
 		}
+	}
+}
+
+void Game::drawUpgrades()
+{
+	for (size_t i = 0; i < this->upgrades.size(); i++)
+	{
+		this->upgrades[i]->draw();
 	}
 }
 
