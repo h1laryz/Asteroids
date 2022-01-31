@@ -44,7 +44,6 @@ void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> pla
 			this->y = rand() % (mapSize.second - this->spriteHeight) + mapPos.second;
 		} while (this->checkTooCloseToPlayer(playerPos, playerSpriteSize));
 		
-
 		for (size_t i = 0; i < asteroids.size(); i++)
 		{
 			collision = Asteroid::checkCollisions(this, asteroids[i]);
@@ -59,11 +58,11 @@ bool Asteroid::checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<in
 {
 	int range = 0;
 
-	if (this->isSmall) range = 70;
-	else range = 100;
+	if (this->isSmall) range = 120;
+	else range = 170;
 
-	std::pair<int, int> centerOfPlayer;
-	std::pair<int, int> centerOfAsteroid;
+	std::pair<float, float> centerOfPlayer;
+	std::pair<float, float> centerOfAsteroid;
 
 	centerOfPlayer.first = playerPos.first + playerSpriteSize.first / 2;
 	centerOfPlayer.second = playerPos.second + playerSpriteSize.second / 2;
@@ -71,29 +70,49 @@ bool Asteroid::checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<in
 	centerOfAsteroid.first = this->x + spriteWidth / 2;
 	centerOfAsteroid.second = this->y + spriteHeight / 2;
 
-	if (abs(this->x - centerOfPlayer.first) <= range || abs(this->y - centerOfPlayer.second) <= range)
+	if (fabs(centerOfAsteroid.first - centerOfPlayer.first) <= range && fabs(centerOfAsteroid.second - centerOfPlayer.second) <= range)
 		return true;
 
 	return false;
 }
+
+//bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
+//{
+//	bool xCollision = false;
+//	bool yCollision = false;
+//
+//	if ((first->x >= second->x && first->x <= second->x + second->spriteWidth)
+//		|| (first->x + first->spriteWidth >= second->x && first->x + first->spriteWidth <= second->x + second->spriteWidth)
+//		|| (second->x >= first->x && second->x <= first->x + first->spriteWidth)
+//		|| (second->x + second->spriteWidth >= first->x && second->x + second->spriteWidth <= first->x + first->spriteWidth))
+//	{
+//		xCollision = true;
+//	}
+//
+//	if ((first->y >= second->y && first->y <= second->y + second->spriteHeight)
+//		|| (first->y + first->spriteHeight >= second->y && first->y + first->spriteHeight <= second->y + second->spriteHeight)
+//		|| (second->y >= first->y && second->y <= first->y + first->spriteHeight)
+//		|| (second->y + second->spriteHeight >= first->y && second->y + second->spriteHeight <= first->y + first->spriteHeight))
+//	{
+//		yCollision = true;
+//	}
+//
+//	return xCollision && yCollision;
+//}
 
 bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
 {
 	bool xCollision = false;
 	bool yCollision = false;
 
-	if ((first->x >= second->x && first->x <= second->x + second->spriteWidth)
-		|| (first->x + first->spriteWidth >= second->x && first->x + first->spriteWidth <= second->x + second->spriteWidth)
-		|| (second->x >= first->x && second->x <= first->x + first->spriteWidth)
-		|| (second->x + second->spriteWidth >= first->x && second->x + second->spriteWidth <= first->x + first->spriteWidth))
+	if (first->x >= second->x && first->x <= second->x + second->spriteWidth
+		|| second->x >= first->x && second->x <= first->x + first->spriteWidth)
 	{
 		xCollision = true;
 	}
 
-	if ((first->y >= second->y && first->y <= second->y + second->spriteHeight)
-		|| (first->y + first->spriteHeight >= second->y && first->y + first->spriteHeight <= second->y + second->spriteHeight)
-		|| (second->y >= first->y && second->y <= first->y + first->spriteHeight)
-		|| (second->y + second->spriteHeight >= first->y && second->y + second->spriteHeight <= first->y + first->spriteHeight))
+	if (first->y >= second->y && first->y <= second->y + second->spriteHeight
+		|| second->y >= first->y && second->y <= first->y + first->spriteHeight)
 	{
 		yCollision = true;
 	}
@@ -160,6 +179,37 @@ void Asteroid::drawAsteroid()
 {
 	drawSprite(this->sprite, this->x, this->y);
 }
+
+void Asteroid::brownianMotion(Asteroid* first, Asteroid* second)
+{
+	std::pair<float, float> firstVelocity = first->currVelocity;
+	std::pair<float, float> secondVelocity = second->currVelocity;
+
+	if (firstVelocity.first > secondVelocity.first)
+	{
+		secondVelocity.first = second->currVelocity.first + (fabs(first->currVelocity.first) - fabs(second->currVelocity.first));
+		//firstVelocity.first = first->currVelocity.first - fabs(second->currVelocity.first);
+	}
+	else if (firstVelocity.first < secondVelocity.first)
+	{
+		firstVelocity.first = first->currVelocity.first + (fabs(first->currVelocity.first) - fabs(second->currVelocity.first));
+		//secondVelocity.first = second->currVelocity.first - fabs(first->currVelocity.first);
+	}
+
+	if (firstVelocity.second > secondVelocity.second)
+	{
+		//firstVelocity.second = first->currVelocity.second - fabs(second->currVelocity.second);
+		secondVelocity.second = second->currVelocity.second + (fabs(first->currVelocity.second) - fabs(second->currVelocity.second));
+	}
+	else if (firstVelocity.second < secondVelocity.second)
+	{
+		//secondVelocity.second = second->currVelocity.second - fabs(first->currVelocity.second);
+		firstVelocity.second = second->currVelocity.second + (fabs(first->currVelocity.second) - fabs(second->currVelocity.second));
+	}
+	first->currVelocity = firstVelocity;
+	second->currVelocity = secondVelocity;
+}
+
 
 std::pair<int, int> Asteroid::getAsteroidSpriteSize()
 {

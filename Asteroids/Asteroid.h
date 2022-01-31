@@ -20,13 +20,14 @@ private:
 	void initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
 		std::pair<int, int> mapSize, std::pair<int, int> mapPos);
 	bool checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize);
-	static bool checkCollisions(Asteroid* first, Asteroid* second);
 public:
+	static bool checkCollisions(Asteroid* first, Asteroid* second);
 	Asteroid(std::pair<int, int> pos, bool isSmall);
 	Asteroid(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize, std::pair<int, int> mapSize, std::pair<int, int> mapPos);
 	virtual ~Asteroid();
 	bool getIsSmall();
 	void drawAsteroid();
+	static void brownianMotion(Asteroid* first, Asteroid* second);
 	std::pair<int, int> getAsteroidSpriteSize();
 	void destroy();
 	void flip(int byX, int byY, std::pair<int, int> mapSize);
