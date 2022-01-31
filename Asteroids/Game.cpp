@@ -231,15 +231,17 @@ void Game::Close() {
 bool Game::Tick() {
 	this->map->drawMap();
 	this->spawnAsteroids();
+	this->drawUpgrades();
 	this->player->drawPlayer();
 	this->crosshair->draw();
-	this->drawUpgrades();
 	this->inertia();
 	this->checkKeys();
 	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
+	this->updateUpgrade();
 	this->checkAllBulletsCollisions();
 	//this->checkPlayerCollisions();
+	this->checkUpgradeBeingTaken();
 	this->checkAsteroidsCollisions();
 	return false;
 }
@@ -290,7 +292,7 @@ void Game::checkAllBulletsCollisions()
 			std::pair<int, int> asteroidPos = asteroids[j]->getPos();
 			std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
 
-			if (this->checkBulletHit(bulletPos, bulletSpriteSize, asteroidPos, asteroidSpriteSize))
+			if (this->checkCollisions(bulletPos, bulletSpriteSize, asteroidPos, asteroidSpriteSize))
 			{
 				bullets[i]->~Bullet();
 				bullets.erase(bullets.begin() + i);
@@ -307,7 +309,7 @@ void Game::checkAllBulletsCollisions()
 					upgradePos.first = asteroids[j]->getPos().first + asteroids[j]->getAsteroidSpriteSize().first / 2;
 					upgradePos.second = asteroids[j]->getPos().second + asteroids[j]->getAsteroidSpriteSize().second / 2;
 
-					Upgrade* upgrade = new Upgrade(upgradePos);
+					Upgrade* upgrade = new Shield(upgradePos);
 					this->upgrades.push_back(upgrade);
 				}
 				asteroids[j]->~Asteroid();
@@ -317,6 +319,30 @@ void Game::checkAllBulletsCollisions()
 			}
 		}
 	}
+}
+
+bool Game::checkCollisions(std::pair<float, float> firstPos, std::pair<int, int> firstSpriteSize, std::pair<float, float> secondPos, std::pair<int, int> secondSpriteSize)
+{
+	bool xCollision = false;
+	bool yCollision = false;
+
+	if ((firstPos.first >= secondPos.first && firstPos.first <= secondPos.first + secondSpriteSize.first)
+		|| (firstPos.first + firstSpriteSize.first >= secondPos.first && firstPos.first + firstSpriteSize.first <= secondPos.first + secondSpriteSize.first)
+		|| (secondPos.first >= firstPos.first && secondPos.first <= firstPos.first + firstSpriteSize.first)
+		|| (secondPos.first + secondSpriteSize.first >= firstPos.first && secondPos.first + secondSpriteSize.first <= firstPos.first + firstSpriteSize.first))
+	{
+		xCollision = true;
+	}
+
+	if ((firstPos.second >= secondPos.second && firstPos.second <= secondPos.second + secondSpriteSize.second)
+		|| (firstPos.second + firstSpriteSize.second >= secondPos.second && firstPos.second + firstSpriteSize.second <= secondPos.second + secondSpriteSize.second)
+		|| (secondPos.second >= firstPos.second && secondPos.second <= firstPos.second + firstSpriteSize.second)
+		|| (secondPos.second + secondSpriteSize.second >= firstPos.second && secondPos.second + secondSpriteSize.second <= firstPos.second + firstSpriteSize.second))
+	{
+		yCollision = true;
+	}
+
+	return xCollision && yCollision;
 }
 
 void Game::checkPlayerCollisions()
@@ -329,26 +355,7 @@ void Game::checkPlayerCollisions()
 		std::pair<int, int> asteroidPos = asteroids[j]->getPos();
 		std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
 
-		bool xCollision = false;
-		bool yCollision = false;
-
-		if ((playerPos.first >= asteroidPos.first && playerPos.first <= asteroidPos.first + asteroidSpriteSize.first)
-			|| (playerPos.first + playerSpriteSize.first >= asteroidPos.first && playerPos.first + playerSpriteSize.first <= asteroidPos.first + asteroidSpriteSize.first)
-			|| (asteroidPos.first >= playerPos.first && asteroidPos.first <= playerPos.first + playerSpriteSize.first)
-			|| (asteroidPos.first + asteroidSpriteSize.first >= playerPos.first && asteroidPos.first + asteroidSpriteSize.first <= playerPos.first + playerSpriteSize.first))
-		{
-			xCollision = true;
-		}
-
-		if ((playerPos.second >= asteroidPos.second && playerPos.second <= asteroidPos.second + asteroidSpriteSize.second)
-			|| (playerPos.second + playerSpriteSize.second >= asteroidPos.second && playerPos.second + playerSpriteSize.second <= asteroidPos.second + asteroidSpriteSize.second)
-			|| (asteroidPos.second >= playerPos.second && asteroidPos.second <= playerPos.second + playerSpriteSize.second)
-			|| (asteroidPos.second + asteroidSpriteSize.second >= playerPos.second && asteroidPos.second + asteroidSpriteSize.second <= playerPos.second + playerSpriteSize.second))
-		{
-			yCollision = true;
-		}
-
-		if (xCollision && yCollision)
+		if (checkCollisions(playerPos, playerSpriteSize, asteroidPos, asteroidSpriteSize))
 			this->restart();
 	}
 }
@@ -369,30 +376,6 @@ void Game::restart()
 	this->asteroids.clear();
 	this->Init();
 	
-}
-
-bool Game::checkBulletHit(std::pair<float, float> bulletPos, std::pair<int, int> bulletSpriteSize, std::pair<int, int> asteroidPos, std::pair<int, int> asteroidSpriteSize)
-{
-	bool xCollision = false;
-	bool yCollision = false;
-
-	if ((bulletPos.first >= asteroidPos.first && bulletPos.first <= asteroidPos.first + asteroidSpriteSize.first)
-		|| (bulletPos.first + bulletSpriteSize.first >= asteroidPos.first && bulletPos.first + bulletSpriteSize.first <= asteroidPos.first + asteroidSpriteSize.first)
-		|| (asteroidPos.first >= bulletPos.first && asteroidPos.first <= bulletPos.first + bulletSpriteSize.first)
-		|| (asteroidPos.first + asteroidSpriteSize.first >= bulletPos.first && asteroidPos.first + asteroidSpriteSize.first <= bulletPos.first + bulletSpriteSize.first))
-	{
-		xCollision = true;
-	}
-
-	if ((bulletPos.second >= asteroidPos.second && bulletPos.second <= asteroidPos.second + asteroidSpriteSize.second)
-		|| (bulletPos.second + bulletSpriteSize.second >= asteroidPos.second && bulletPos.second + bulletSpriteSize.second <= asteroidPos.second + asteroidSpriteSize.second)
-		|| (asteroidPos.second >= bulletPos.second && asteroidPos.second <= bulletPos.second + bulletSpriteSize.second)
-		|| (asteroidPos.second + asteroidSpriteSize.second >= bulletPos.second && asteroidPos.second + asteroidSpriteSize.second <= bulletPos.second + bulletSpriteSize.second))
-	{
-		yCollision = true;
-	}
-
-	return xCollision && yCollision;
 }
 
 void Game::inertia()
@@ -480,11 +463,42 @@ void Game::onKeyReleased(FRKey k) {
 	}
 }
 
+void Game::checkUpgradeBeingTaken()
+{
+	auto playerPos = this->player->getPos();
+	auto playerSpriteSize = this->player->getPlayerSpriteSize();
+
+	for (size_t i = 0; i < upgrades.size(); i++)
+	{
+		auto upgradePos = upgrades[i]->getPos();
+		auto upgradeSpriteSize = upgrades[i]->getUpgradeSpriteSize();
+		if (checkCollisions(playerPos, playerSpriteSize, upgradePos, upgradeSpriteSize))
+		{
+			this->activatedUpgrade = upgrades[i];
+			this->upgrades.erase(this->upgrades.begin() + i);
+			i = 0;
+		}
+	}
+}
+
+void Game::updateUpgrade()
+{
+	auto newPos = std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2, this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2);
+	if (activatedUpgrade != nullptr)
+	{
+		this->activatedUpgrade->activate(newPos);
+	}
+}
+
 void Game::drawUpgrades()
 {
 	for (size_t i = 0; i < this->upgrades.size(); i++)
 	{
 		this->upgrades[i]->draw();
+	}
+	if (activatedUpgrade != nullptr)
+	{
+		activatedUpgrade->draw();
 	}
 }
 

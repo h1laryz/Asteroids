@@ -21,6 +21,7 @@ private:
 	std::vector<Asteroid*> asteroids;
 	std::vector<Bullet*> bullets;
 	std::vector<Upgrade*> upgrades;
+	Upgrade* activatedUpgrade;
 	// input
 	std::vector<FRKey> inputtedKeys;
 	// params
@@ -43,6 +44,9 @@ private:
 	void onKeyPressed(FRKey k) override;
 	void onKeyReleased(FRKey k) override;
 
+	void updateUpgrade();
+	bool checkCollisions(std::pair<float, float> firstPos, std::pair<int, int> firstSpriteSize, std::pair<float, float> secondPos, std::pair<int, int> secondSpriteSize);
+	void checkUpgradeBeingTaken();
 	void drawUpgrades();
 	void checkKeys();
 	void updateAndDrawBullets();
@@ -56,7 +60,6 @@ private:
 	void checkAllBulletsCollisions();
 	void checkPlayerCollisions();
 	void restart();
-	bool checkBulletHit(std::pair<float, float> bulletPos, std::pair<int, int> bulletSpriteSize, std::pair<int, int> asteroidPos, std::pair<int, int> asteroidSpriteSize);
 	void inertia();
 public:
 	Game();
