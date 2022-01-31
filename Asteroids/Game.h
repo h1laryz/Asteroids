@@ -26,7 +26,7 @@ private:
 	Shield* shield;
 	bool isShieldActivated;
 	unsigned int startUpgradeTime;
-	unsigned int upgradeSecondsDuration = 6;
+	unsigned int upgradeSecondsDuration = 100000000;
 	// input
 	std::vector<FRKey> inputtedKeys;
 	// params
@@ -49,6 +49,9 @@ private:
 	void onKeyPressed(FRKey k) override;
 	void onKeyReleased(FRKey k) override;
 
+	bool checkCollisionsWithCircle(std::pair<float, float> spriteObjectPos, std::pair<int, int> spriteObjectSize,
+		std::pair<float, float> shieldPos, float radius);
+	void checkShieldCollisions();
 	void updateUpgrade();
 	bool checkCollisions(std::pair<float, float> firstPos, std::pair<int, int> firstSpriteSize, std::pair<float, float> secondPos, std::pair<int, int> secondSpriteSize);
 	void checkUpgradeBeingTaken();

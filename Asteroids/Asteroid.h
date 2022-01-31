@@ -31,7 +31,6 @@ public:
 	void drawAsteroid();
 	static void brownianMotion(Asteroid* first, Asteroid* second);
 	std::pair<int, int> getAsteroidSpriteSize();
-	void destroy();
 	void flip(int byX, int byY, std::pair<int, int> mapSize);
 	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed);
 	static int getCount();

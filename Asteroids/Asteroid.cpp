@@ -242,11 +242,6 @@ std::pair<int, int> Asteroid::getAsteroidSpriteSize()
 	return std::pair<int, int>(spriteWidth, spriteHeight);
 }
 
-void Asteroid::destroy()
-{
-	this->~Asteroid();
-}
-
 void Asteroid::flip(int byX, int byY, std::pair<int, int> mapSize)
 {
 	// flip by left
@@ -260,7 +255,6 @@ void Asteroid::flip(int byX, int byY, std::pair<int, int> mapSize)
 		this->x = this->x - mapSize.first + this->spriteWidth;
 	}
 	
-
 	// flip by up
 	if (byY == 1)
 	{

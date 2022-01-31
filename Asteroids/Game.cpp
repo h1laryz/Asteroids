@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <math.h>
 
 Game::Game()
 {
@@ -13,7 +14,7 @@ Game::Game()
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 10;
+	this->numOfAsteroids = 30;
 	this->abilityProbability = 0.2f;
 
 	// game objects
@@ -113,6 +114,37 @@ void Game::checkOutOfBounds()
 	this->checkPlayerOutOfBounds();
 	this->checkBulletsOutOfBounds();
 	this->checkAsteroidsOutOfBounds();
+}
+
+bool Game::checkCollisionsWithCircle(std::pair<float, float> spriteObjectPos, std::pair<int, int> spriteObjectSize, std::pair<float, float> circlePos, float radius)
+{
+	circlePos.first = (player->getPos().first + player->getPlayerSpriteSize().first / 2);
+	circlePos.second = (player->getPos().second + player->getPlayerSpriteSize().second / 2);
+
+	std::pair<float, float> circleDistance;
+
+	spriteObjectPos.first += spriteObjectSize.first / 2;
+	spriteObjectPos.second += spriteObjectSize.second / 2;
+
+	circleDistance.first = fabs(circlePos.first - spriteObjectPos.first);
+	circleDistance.second = fabs(circlePos.second - spriteObjectPos.second);
+
+	if (circleDistance.first > ((float)spriteObjectSize.first / 2 + radius)) { return false; }
+	if (circleDistance.second > ((float)spriteObjectSize.second / 2 + radius)) { return false; }
+
+	if (circleDistance.first <= ((float)spriteObjectSize.first / 2)) { return true; }
+	if (circleDistance.second <= ((float)spriteObjectSize.second / 2)) { return true; }
+
+	float cornerDistance_sq = powf((circleDistance.first - spriteObjectSize.first / 2), 2) +
+		powf((circleDistance.second - (float)spriteObjectSize.second / 2), 2);
+
+	return (cornerDistance_sq <= (powf(radius, 2)));
+}
+
+
+void Game::checkShieldCollisions()
+{
+
 }
 
 void Game::checkBulletsOutOfBounds() // TODO: pass gameObject* 
@@ -257,7 +289,12 @@ void Game::spawnAsteroids()
 
 	for (size_t i = 0; i < this->asteroids.size(); i++)
 	{
-		this->asteroids[i]->update();
+		if ((isShieldActivated && !(this->checkCollisionsWithCircle(asteroids[i]->getPos(), asteroids[i]->getAsteroidSpriteSize(), 
+			shield->getPos(), shield->getRadius()))) || !isShieldActivated)
+		{
+			this->asteroids[i]->update();
+		}
+
 		this->asteroids[i]->drawAsteroid();
 	}
 }
