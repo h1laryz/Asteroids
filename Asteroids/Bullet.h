@@ -16,8 +16,8 @@ private:
 	float speed;
 public:
 	static int getCount();
-	Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos);
-	static void move(std::vector<Bullet*> bullets, int dirX, int dirY, int movementSpeed);
+	Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet);
+	static void move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, int dirX, int dirY, int movementSpeed);
 	void update();
 	void draw();
 	~Bullet();

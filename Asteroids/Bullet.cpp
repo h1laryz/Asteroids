@@ -8,9 +8,11 @@ int Bullet::getCount()
 	return Bullet::count;
 }
 
-Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos)
+Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet)
 {
-	this->sprite = createSprite("..\\data\\bullet.png");
+	if (!autoBullet) this->sprite = createSprite("..\\data\\bullet.png");
+	else this->sprite = createSprite("..\\data\\autobullet.png");
+
 	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
 
 	this->x = playerPos.first;
@@ -30,12 +32,18 @@ Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos)
 	count++;
 }
 
-void Bullet::move(std::vector<Bullet*> bullets, int dirX, int dirY, int movementSpeed)
+
+void Bullet::move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, int dirX, int dirY, int movementSpeed)
 {
 	for (size_t i = 0; i < bullets.size(); i++)
 	{
 		bullets[i]->x = bullets[i]->x + dirX * movementSpeed;
 		bullets[i]->y = bullets[i]->y + dirY * movementSpeed;
+	}
+	for (size_t i = 0; i < autoBullets.size(); i++)
+	{
+		autoBullets[i]->x = autoBullets[i]->x + dirX * movementSpeed;
+		autoBullets[i]->y = autoBullets[i]->y + dirY * movementSpeed;
 	}
 }
 

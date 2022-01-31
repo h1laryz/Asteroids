@@ -12,6 +12,8 @@ Asteroid::Asteroid()
 
 	this->movementSpeed = 0.4f;
 
+	this->autoBulletTryToHit = false;
+
 	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
 	this->currVelocity.second = this->dirYNorm * this->movementSpeed;
 
@@ -52,6 +54,16 @@ void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> pla
 		}
 
 	} while (collision);
+}
+
+void Asteroid::setAutoBulletTryToHit(bool flag)
+{
+	this->autoBulletTryToHit = flag;
+}
+
+bool Asteroid::getAutoBulletTryToHit()
+{
+	return this->autoBulletTryToHit;
 }
 
 bool Asteroid::checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize)
@@ -125,6 +137,8 @@ Asteroid::Asteroid(bool isSmall)
 	this->x = 0;
 	this->y = 0;
 
+	this->autoBulletTryToHit = false;
+
 	this->dirXNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + +rand() % 2 - 1;
 	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + +rand() % 2 - 1;
 
@@ -156,6 +170,8 @@ Asteroid::Asteroid(std::pair<int, int> pos, bool isSmall)
 	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + + rand() % 2 - 1;
 
 	this->movementSpeed = 0.4f;
+
+	this->autoBulletTryToHit = false;
 
 	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
 	this->currVelocity.second = this->dirYNorm * this->movementSpeed;

@@ -21,12 +21,14 @@ private:
 	Crosshair* crosshair;
 	std::vector<Asteroid*> asteroids;
 	std::vector<Bullet*> bullets;
+	std::vector<Bullet*> autoBullets;
 	std::vector<Upgrade*> upgrades;
 	Upgrade* activatedUpgrade;
 	Shield* shield;
 	bool isShieldActivated;
+	bool isAutoBulletsActivated;
 	unsigned int startUpgradeTime;
-	unsigned int upgradeSecondsDuration = 100000000;
+	unsigned int upgradeSecondsDuration = 7;
 	// input
 	std::vector<FRKey> inputtedKeys;
 	// params

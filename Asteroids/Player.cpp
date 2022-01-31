@@ -57,7 +57,7 @@ void Player::updatePos()
 
 Bullet* Player::shoot(std::pair<int, int> crosshairPos)
 {
-	return new Bullet(std::pair<int,int>(this->x + this->spriteWidth / 2, this->y + this->spriteHeight / 2), crosshairPos);
+	return new Bullet(std::pair<int,int>(this->x + this->spriteWidth / 2, this->y + this->spriteHeight / 2), crosshairPos, false);
 }
 
 std::pair<float, float> Player::getPos()
