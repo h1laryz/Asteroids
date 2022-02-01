@@ -17,30 +17,43 @@ private:
 	float movementSpeed;
 	bool autoBulletTryToHit;
 
+	// private constructors / destructors
 	Asteroid();
 	Asteroid(bool isSmall);
 
-	void initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
-		std::pair<int, int> mapSize, std::pair<int, int> mapPos);
+	// private methods
+	void initPos(std::vector<Asteroid*> asteroids, std::pair<float, float> playerPos, std::pair<int, int> playerSpriteSize,
+		std::pair<int, int> mapSize, std::pair<float, float> mapPos);
 public:
-	std::pair<float, float> getVelocity();
+	// Constructors / destructors
+	Asteroid(std::pair<float, float> pos, bool isSmall);
+	Asteroid(std::vector<Asteroid*> asteroids, std::pair<float, float> playerPos, std::pair<int, int> playerSpriteSize, std::pair<int, int> mapSize, std::pair<float, float> mapPos);
+	~Asteroid();
+
+	// getters
+	std::pair<float, float> getPos() const;
+	const std::pair<float, float>& getVelocity() const;
+	const bool& getAutoBulletTryToHit() const;
+	const bool& getIsSmall() const;
+	const static int& getCount();
+	std::pair<int, int> getAsteroidSpriteSize() const;
+
+	// setters
 	void setAutoBulletTryToHit(bool flag);
-	bool getAutoBulletTryToHit();
-	bool checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize);
-	static bool checkCollisions(Asteroid* first, Asteroid* second);
-	Asteroid(std::pair<int, int> pos, bool isSmall);
-	Asteroid(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize, std::pair<int, int> mapSize, std::pair<int, int> mapPos);
-	virtual ~Asteroid();
-	bool getIsSmall();
+
+	// methods
+	bool checkTooCloseToPlayer(std::pair<float, float> playerPos, std::pair<int, int> playerSpriteSize);
 	void drawAsteroid();
-	static void brownianMotion(Asteroid* first, Asteroid* second);
-	std::pair<int, int> getAsteroidSpriteSize();
-	void flip(int byX, int byY, std::pair<int, int> mapSize);
-	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed);
-	static int getCount();
 	void update();
-	std::pair<int, int> getPos();
+	void flip(int byX, int byY, std::pair<int, int> mapSize);
 	std::pair<Asteroid*, Asteroid*> split();
+
+	// static
+	static bool checkCollisions(Asteroid* first, Asteroid* second);
+	static void brownianMotion(Asteroid* first, Asteroid* second);
+	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed);
+
+	// friends
 	friend class Map;
 };
 

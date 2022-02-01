@@ -11,7 +11,6 @@ Asteroid::Asteroid()
 	this->dirYNorm = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) + rand() % 2 - 1;
 
 	this->movementSpeed = 0.4f;
-
 	this->autoBulletTryToHit = false;
 
 	this->currVelocity.first = this->dirXNorm * this->movementSpeed;
@@ -33,8 +32,8 @@ Asteroid::Asteroid()
 	count++;
 }
 
-void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
-	std::pair<int, int> mapSize, std::pair<int, int> mapPos)
+void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<float, float> playerPos, std::pair<int, int> playerSpriteSize,
+	std::pair<int, int> mapSize, std::pair<float, float> mapPos)
 {
 	bool collision = false;
 	do
@@ -56,22 +55,13 @@ void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> pla
 	} while (collision);
 }
 
-std::pair<float, float> Asteroid::getVelocity()
-{
-	return this->currVelocity;
-}
-
 void Asteroid::setAutoBulletTryToHit(bool flag)
 {
 	this->autoBulletTryToHit = flag;
 }
 
-bool Asteroid::getAutoBulletTryToHit()
-{
-	return this->autoBulletTryToHit;
-}
 
-bool Asteroid::checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize)
+bool Asteroid::checkTooCloseToPlayer(std::pair<float, float> playerPos, std::pair<int, int> playerSpriteSize)
 {
 	int range = 0;
 
@@ -81,8 +71,8 @@ bool Asteroid::checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<in
 	std::pair<float, float> centerOfPlayer;
 	std::pair<float, float> centerOfAsteroid;
 
-	centerOfPlayer.first = playerPos.first + playerSpriteSize.first / 2;
-	centerOfPlayer.second = playerPos.second + playerSpriteSize.second / 2;
+	centerOfPlayer.first = playerPos.first + (float)playerSpriteSize.first / 2;
+	centerOfPlayer.second = playerPos.second + (float)playerSpriteSize.second / 2;
 
 	centerOfAsteroid.first = this->x + spriteWidth / 2;
 	centerOfAsteroid.second = this->y + spriteHeight / 2;
@@ -92,30 +82,6 @@ bool Asteroid::checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<in
 
 	return false;
 }
-
-//bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
-//{
-//	bool xCollision = false;
-//	bool yCollision = false;
-//
-//	if ((first->x >= second->x && first->x <= second->x + second->spriteWidth)
-//		|| (first->x + first->spriteWidth >= second->x && first->x + first->spriteWidth <= second->x + second->spriteWidth)
-//		|| (second->x >= first->x && second->x <= first->x + first->spriteWidth)
-//		|| (second->x + second->spriteWidth >= first->x && second->x + second->spriteWidth <= first->x + first->spriteWidth))
-//	{
-//		xCollision = true;
-//	}
-//
-//	if ((first->y >= second->y && first->y <= second->y + second->spriteHeight)
-//		|| (first->y + first->spriteHeight >= second->y && first->y + first->spriteHeight <= second->y + second->spriteHeight)
-//		|| (second->y >= first->y && second->y <= first->y + first->spriteHeight)
-//		|| (second->y + second->spriteHeight >= first->y && second->y + second->spriteHeight <= first->y + first->spriteHeight))
-//	{
-//		yCollision = true;
-//	}
-//
-//	return xCollision && yCollision;
-//}
 
 bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
 {
@@ -166,7 +132,7 @@ Asteroid::Asteroid(bool isSmall)
 }
 
 
-Asteroid::Asteroid(std::pair<int, int> pos, bool isSmall)
+Asteroid::Asteroid(std::pair<float, float> pos, bool isSmall)
 {
 	this->x = pos.first;
 	this->y = pos.second;
@@ -194,8 +160,8 @@ Asteroid::Asteroid(std::pair<int, int> pos, bool isSmall)
 	count++;
 }
 
-Asteroid::Asteroid(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
-	std::pair<int, int> mapSize, std::pair<int, int> mapPos) : Asteroid()
+Asteroid::Asteroid(std::vector<Asteroid*> asteroids, std::pair<float, float> playerPos, std::pair<int, int> playerSpriteSize,
+	std::pair<int, int> mapSize, std::pair<float, float> mapPos) : Asteroid()
 {
 	this->initPos(asteroids, playerPos, playerSpriteSize, mapSize, mapPos);
 	
@@ -205,11 +171,6 @@ Asteroid::~Asteroid()
 {
 	destroySprite(this->sprite);
 	count--;
-}
-
-bool Asteroid::getIsSmall()
-{
-	return this->isSmall;
 }
 
 void Asteroid::move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed)
@@ -222,9 +183,29 @@ void Asteroid::move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int mo
 	
 }
 
+std::pair<float, float> Asteroid::getPos() const
+{
+	return std::pair<float, float>(this->x, this->y);
+}
+
+const std::pair<float, float>& Asteroid::getVelocity() const
+{
+	return this->currVelocity;
+}
+
+const bool& Asteroid::getAutoBulletTryToHit() const
+{
+	return this->autoBulletTryToHit;
+}
+
+const bool& Asteroid::getIsSmall() const
+{
+	return this->isSmall;
+}
+
 void Asteroid::drawAsteroid()
 {
-	drawSprite(this->sprite, this->x, this->y);
+	drawSprite(this->sprite, roundf(this->x), roundf(this->y));
 }
 
 void Asteroid::brownianMotion(Asteroid* first, Asteroid* second)
@@ -264,7 +245,7 @@ void Asteroid::brownianMotion(Asteroid* first, Asteroid* second)
 }
 
 
-std::pair<int, int> Asteroid::getAsteroidSpriteSize()
+std::pair<int, int> Asteroid::getAsteroidSpriteSize() const
 {
 	return std::pair<int, int>(spriteWidth, spriteHeight);
 }
@@ -294,7 +275,7 @@ void Asteroid::flip(int byX, int byY, std::pair<int, int> mapSize)
 	}
 }
 
-int Asteroid::getCount()
+const int& Asteroid::getCount()
 {
 	return count;
 }
@@ -303,11 +284,6 @@ void Asteroid::update()
 {
 	this->x += this->currVelocity.first;
 	this->y += this->currVelocity.second;
-}
-
-std::pair<int, int> Asteroid::getPos()
-{
-	return std::pair<int, int>(this->x, this->y);
 }
 
 std::pair<Asteroid*, Asteroid*> Asteroid::split()
@@ -323,24 +299,24 @@ std::pair<Asteroid*, Asteroid*> Asteroid::split()
 
 	if (rand() % 2)
 	{
-		first->x = this->x + first->spriteWidth / 2;
-		second->x = this->x - second->spriteWidth / 2 - 2;
+		first->x = this->x + (float)first->spriteWidth / 2;
+		second->x = this->x - (float)second->spriteWidth / 2 - 2;
 	}
 	else
 	{
-		first->x = this->x - first->spriteWidth / 2 - 2;
-		second->x = this->x + second->spriteWidth / 2;
+		first->x = this->x - (float)first->spriteWidth / 2 - 2;
+		second->x = this->x + (float)second->spriteWidth / 2;
 	}
 
 	if (rand() % 2)
 	{
-		first->y = this->y + first->spriteHeight / 2;
-		second->y = this->y - second->spriteHeight / 2 - 2;
+		first->y = this->y + (float)first->spriteHeight / 2;
+		second->y = this->y - (float)second->spriteHeight / 2 - 2;
 	}
 	else
 	{
-		first->y = this->y - first->spriteHeight / 2 - 2;
-		second->y = this->y + second->spriteHeight / 2;
+		first->y = this->y - (float)first->spriteHeight / 2 - 2;
+		second->y = this->y + (float)second->spriteHeight / 2;
 	}
 
 	return std::pair<Asteroid*, Asteroid*>(first, second);

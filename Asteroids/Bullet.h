@@ -17,11 +17,10 @@ private:
 	float speed;
 
 	Asteroid* asteroid;
-	std::pair<float, float> asteroidStartPos;
 public:
 	static int getCount();
 	Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet, Asteroid* aim);
-	static void move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, int dirX, int dirY, int movementSpeed);
+	static void move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, int dirX, int dirY, int movementSpeed);
 	void update();
 	void draw();
 	~Bullet();

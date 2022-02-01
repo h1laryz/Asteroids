@@ -63,7 +63,8 @@ Upgrade::Upgrade(std::pair<float, float> pos)
 
 Upgrade::~Upgrade()
 {
-	destroySprite(this->sprite);
+	if (this->sprite != nullptr)
+		destroySprite(this->sprite);
 }
 
 void Upgrade::draw()

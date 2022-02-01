@@ -21,18 +21,18 @@ private:
 
 	// private methods
 	void calculateCountOfSprites(int mapWidth, int mapHeight);
-	void flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Upgrade*> upgrades, int xBefore, int yBefore, bool vertical, bool horisontal);
+	void flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades, int xBefore, int yBefore, bool vertical, bool horisontal);
 
 public:
-	Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight);
-	virtual ~Map();
+	Map(unsigned int &mapWidth, unsigned int &mapHeight, int windowWidth, int windowHeight);
+	~Map();
 	void drawMap();
 	void getMapSpriteSize(int& w, int& h);
 	std::pair<int, int> getMapSize();
 	void destroy();
 	void move(int dirX, int dirY);
-	void updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Upgrade*> upgrades);
-	void flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Upgrade*> upgrades, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize);
+	void updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades);
+	void flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize);
 	std::pair<float, float> getPos();
 	std::pair<int, int> getCountSprites();
 	int getMovementSpeed();

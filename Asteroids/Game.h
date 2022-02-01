@@ -59,7 +59,6 @@ private:
 	Asteroid* findAsteroidUnderCrosshair();
 	bool checkCollisionsWithCircle(std::pair<float, float> spriteObjectPos, std::pair<int, int> spriteObjectSize,
 		std::pair<float, float> shieldPos, float radius);
-	void checkShieldCollisions();
 	void updateUpgrade();
 	bool checkCollisions(std::pair<float, float> firstPos, std::pair<int, int> firstSpriteSize, std::pair<float, float> secondPos, std::pair<int, int> secondSpriteSize);
 	void checkUpgradeBeingTaken();
@@ -68,12 +67,14 @@ private:
 	void updateAndDrawBullets();
 	void move(FRKey k);
 	void checkOutOfBounds();
+	void checkAllBulletsOutOfBounds();
 	void checkPlayerOutOfBounds();
-	void checkBulletsOutOfBounds();
+	void checkBulletsOutOfBounds(Bullet* bullet);
 	void checkAsteroidsOutOfBounds();
 	void spawnAsteroids();
 	void checkAsteroidsCollisions();
 	void checkAllBulletsCollisions();
+	void checkBulletsCollisions(std::vector<Bullet*>& b);
 	void checkPlayerCollisions();
 	void restart();
 	void inertia();

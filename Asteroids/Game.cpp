@@ -14,13 +14,15 @@ Game::Game()
 
 	// properties
 	this->numOfBullets = 3;
-	this->numOfAsteroids = 30;
+	this->numOfAsteroids = 10;
 	this->abilityProbability = 0.2f;
 
 	// game objects
 	this->player = nullptr;
 	this->map = nullptr;
 	this->crosshair = nullptr;
+	this->activatedUpgrade = nullptr;
+	this->shield = nullptr;
 }
 
 Game::Game(int argc, char** argv) : Game()
@@ -73,6 +75,28 @@ Game::Game(int argc, char** argv) : Game()
 Game::~Game()
 {
 	delete this->player;
+	delete this->crosshair;
+	delete this->map;
+	for (size_t i = 0; i < this->bullets.size(); i++)
+	{
+		delete this->bullets[i];
+	}
+	for (size_t i = 0; i < this->asteroids.size(); i++)
+	{
+		delete this->asteroids[i];
+	}
+	for (size_t i = 0; i < this->autoBullets.size(); i++)
+	{
+		delete this->autoBullets[i];
+	}
+	for (size_t i = 0; i < this->homingMissiles.size(); i++)
+	{
+		delete this->homingMissiles[i];
+	}
+	for (size_t i = 0; i < this->upgrades.size(); i++)
+	{
+		delete this->upgrades[i];
+	}
 }
 
 void Game::move(FRKey k)
@@ -82,28 +106,28 @@ void Game::move(FRKey k)
 	case FRKey::RIGHT:
 		this->map->move(-1, 0);
 		Asteroid::move(this->asteroids, -1, 0, this->map->getMovementSpeed());
-		Bullet::move(this->bullets, this->autoBullets, -1, 0, this->map->getMovementSpeed());
+		Bullet::move(this->bullets, this->autoBullets, this->homingMissiles, -1, 0, this->map->getMovementSpeed());
 		Upgrade::move(this->upgrades, -1, 0, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::LEFT:
 		this->map->move(1, 0);
 		Asteroid::move(this->asteroids, 1, 0, this->map->getMovementSpeed());
-		Bullet::move(this->bullets, this->autoBullets, 1, 0, this->map->getMovementSpeed());
+		Bullet::move(this->bullets, this->autoBullets, this->homingMissiles, 1, 0, this->map->getMovementSpeed());
 		Upgrade::move(this->upgrades, 1, 0, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::DOWN:
 		this->map->move(0, -1);
 		Asteroid::move(this->asteroids, 0, -1, this->map->getMovementSpeed());
-		Bullet::move(this->bullets, this->autoBullets, 0, -1, this->map->getMovementSpeed());
+		Bullet::move(this->bullets, this->autoBullets, this->homingMissiles, 0, -1, this->map->getMovementSpeed());
 		Upgrade::move(this->upgrades, 0, -1, this->map->getMovementSpeed());
 		break;
 
 	case FRKey::UP:
 		this->map->move(0, 1);
 		Asteroid::move(this->asteroids, 0, 1, this->map->getMovementSpeed());
-		Bullet::move(this->bullets, this->autoBullets, 0, 1, this->map->getMovementSpeed());
+		Bullet::move(this->bullets, this->autoBullets, this->homingMissiles, 0, 1, this->map->getMovementSpeed());
 		Upgrade::move(this->upgrades, 0, 1, this->map->getMovementSpeed());
 		break;
 	}
@@ -112,7 +136,7 @@ void Game::move(FRKey k)
 void Game::checkOutOfBounds()
 {
 	this->checkPlayerOutOfBounds();
-	this->checkBulletsOutOfBounds();
+	this->checkAllBulletsOutOfBounds();
 	this->checkAsteroidsOutOfBounds();
 }
 
@@ -142,66 +166,33 @@ bool Game::checkCollisionsWithCircle(std::pair<float, float> spriteObjectPos, st
 }
 
 
-void Game::checkShieldCollisions()
-{
 
-}
-
-void Game::checkBulletsOutOfBounds() // TODO: pass gameObject* 
+void Game::checkBulletsOutOfBounds(Bullet* bullet) // TODO: pass gameObject* 
 {
-	for (size_t i = 0; i < bullets.size(); i++)
+	// check left
+	if (bullet->getPos().first < this->map->getPos().first)
 	{
-		// check left
-		if (this->bullets[i]->getPos().first < this->map->getPos().first)
-		{
-			this->bullets[i]->flip(-1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
-		}
-		// check right
-		else if (this->bullets[i]->getPos().first + this->bullets[i]->getBulletSpriteSize().first
-		> this->mapWidth + this->map->getPos().first)
-		{
-			this->bullets[i]->flip(1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
-		}
-
-		// check up
-		if (this->bullets[i]->getPos().second < this->map->getPos().second)
-		{
-			this->bullets[i]->flip(0, 1, std::pair<int, int>(this->mapWidth, this->mapHeight));
-		}
-		// check down
-		else if (this->bullets[i]->getPos().second + this->bullets[i]->getBulletSpriteSize().second
-		> this->mapHeight + this->map->getPos().second)
-		{
-			this->bullets[i]->flip(0, -1, std::pair<int, int>(this->mapWidth, this->mapHeight));
-		}
+		bullet->flip(-1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
+	}
+	// check right
+	else if (bullet->getPos().first + bullet->getBulletSpriteSize().first
+	> this->mapWidth + this->map->getPos().first)
+	{
+		bullet->flip(1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
 	}
 
-	for (size_t i = 0; i < autoBullets.size(); i++)
+	// check up
+	if (bullet->getPos().second < this->map->getPos().second)
 	{
-		// check left
-		if (this->autoBullets[i]->getPos().first < this->map->getPos().first)
-		{
-			this->autoBullets[i]->flip(-1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
-		}
-		// check right
-		else if (this->autoBullets[i]->getPos().first + this->autoBullets[i]->getBulletSpriteSize().first
-		> this->mapWidth + this->map->getPos().first)
-		{
-			this->autoBullets[i]->flip(1, 0, std::pair<int, int>(this->mapWidth, this->mapHeight));
-		}
-
-		// check up
-		if (this->autoBullets[i]->getPos().second < this->map->getPos().second)
-		{
-			this->autoBullets[i]->flip(0, 1, std::pair<int, int>(this->mapWidth, this->mapHeight));
-		}
-		// check down
-		else if (this->autoBullets[i]->getPos().second + this->autoBullets[i]->getBulletSpriteSize().second
-		> this->mapHeight + this->map->getPos().second)
-		{
-			this->autoBullets[i]->flip(0, -1, std::pair<int, int>(this->mapWidth, this->mapHeight));
-		}
+		bullet->flip(0, 1, std::pair<int, int>(this->mapWidth, this->mapHeight));
 	}
+	// check down
+	else if (bullet->getPos().second + bullet->getBulletSpriteSize().second
+	> this->mapHeight + this->map->getPos().second)
+	{
+		bullet->flip(0, -1, std::pair<int, int>(this->mapWidth, this->mapHeight));
+	}
+
 }
 
 void Game::checkAsteroidsOutOfBounds()
@@ -239,25 +230,25 @@ void Game::checkPlayerOutOfBounds()
 	// check left
 	if (this->player->getPos().first < this->map->getPos().first)
 	{
-		this->map->flip(asteroids, bullets, autoBullets, upgrades, -1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, bullets, autoBullets, homingMissiles, upgrades, -1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 	// check right
 	else if (this->player->getPos().first + this->player->getPlayerSpriteSize().first
 	> this->mapWidth + this->map->getPos().first)
 	{
-		this->map->flip(asteroids, bullets, autoBullets, upgrades, 1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, bullets, autoBullets, homingMissiles, upgrades, 1, 0, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 
 	// check up
 	if (this->player->getPos().second < this->map->getPos().second)
 	{
-		this->map->flip(asteroids, bullets, autoBullets, upgrades, 0, -1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, bullets, autoBullets, homingMissiles, upgrades, 0, -1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 	// check down
 	else if (this->player->getPos().second + this->player->getPlayerSpriteSize().second
 	> this->mapHeight + this->map->getPos().second)
 	{
-		this->map->flip(asteroids, bullets, autoBullets, upgrades, 0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
+		this->map->flip(asteroids, bullets, autoBullets, homingMissiles, upgrades, 0, 1, player->getPlayerSpriteSize(), std::pair<int, int>(this->windowWidth, this->windowHeight));
 	}
 }
 
@@ -275,8 +266,7 @@ bool Game::Init() {
 	this->map = new Map(this->mapWidth, this->mapHeight, this->windowWidth, this->windowHeight);
 	this->crosshair = new Crosshair(this->windowWidth, this->windowHeight);
 	this->shield = new Shield;
-	this->mapWidth = this->map->getMapSize().first;
-	this->mapHeight = this->map->getMapSize().second;
+	this->activatedUpgrade = nullptr;
 
 	return true;
 }
@@ -299,6 +289,7 @@ bool Game::Tick() {
 	this->checkOutOfBounds();
 	this->updateAndDrawBullets();
 	this->checkAllBulletsCollisions();
+	this->checkPlayerCollisions();
 	this->checkUpgradeBeingTaken();
 	this->checkAsteroidsCollisions();
 	return false;
@@ -345,81 +336,9 @@ void Game::checkAsteroidsCollisions()
 
 void Game::checkAllBulletsCollisions()
 {
-	for (size_t i = 0; i < bullets.size(); i++)
-	{
-		std::pair<float, float> bulletPos = bullets[i]->getPos();
-		std::pair<int, int> bulletSpriteSize = bullets[i]->getBulletSpriteSize();
-
-		for (size_t j = 0; j < asteroids.size(); j++)
-		{
-			std::pair<int, int> asteroidPos = asteroids[j]->getPos();
-			std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
-
-			if (this->checkCollisions(bulletPos, bulletSpriteSize, asteroidPos, asteroidSpriteSize))
-			{
-				bullets[i]->~Bullet();
-				bullets.erase(bullets.begin() + i);
-
-				if (!asteroids[j]->getIsSmall())
-				{
-					auto newAsteroids = asteroids[j]->split();
-					asteroids.push_back(newAsteroids.first);
-					asteroids.push_back(newAsteroids.second);
-				}
-				if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) <= this->abilityProbability)
-				{
-					std::pair<float, float> upgradePos;
-					upgradePos.first = asteroids[j]->getPos().first + asteroids[j]->getAsteroidSpriteSize().first / 2;
-					upgradePos.second = asteroids[j]->getPos().second + asteroids[j]->getAsteroidSpriteSize().second / 2;
-
-					Upgrade* upgrade = new Upgrade(upgradePos);
-					this->upgrades.push_back(upgrade);
-				}
-				asteroids[j]->~Asteroid();
-				asteroids.erase(asteroids.begin() + j);
-				i = 0;
-				break;
-			}
-		}
-	}
-
-	for (size_t i = 0; i < autoBullets.size(); i++)
-	{
-		std::pair<float, float> bulletPos = autoBullets[i]->getPos();
-		std::pair<int, int> bulletSpriteSize = autoBullets[i]->getBulletSpriteSize();
-
-		for (size_t j = 0; j < asteroids.size(); j++)
-		{
-			std::pair<int, int> asteroidPos = asteroids[j]->getPos();
-			std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
-
-			if (this->checkCollisions(bulletPos, bulletSpriteSize, asteroidPos, asteroidSpriteSize))
-			{
-				autoBullets[i]->~Bullet();
-				autoBullets.erase(autoBullets.begin() + i);
-
-				if (!asteroids[j]->getIsSmall())
-				{
-					auto newAsteroids = asteroids[j]->split();
-					asteroids.push_back(newAsteroids.first);
-					asteroids.push_back(newAsteroids.second);
-				}
-				if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) <= this->abilityProbability)
-				{
-					std::pair<float, float> upgradePos;
-					upgradePos.first = asteroids[j]->getPos().first + asteroids[j]->getAsteroidSpriteSize().first / 2;
-					upgradePos.second = asteroids[j]->getPos().second + asteroids[j]->getAsteroidSpriteSize().second / 2;
-
-					Upgrade* upgrade = new Upgrade(upgradePos);
-					this->upgrades.push_back(upgrade);
-				}
-				asteroids[j]->~Asteroid();
-				asteroids.erase(asteroids.begin() + j);
-				i = 0;
-				break;
-			}
-		}
-	}
+	this->checkBulletsCollisions(this->bullets);
+	this->checkBulletsCollisions(this->autoBullets);
+	this->checkBulletsCollisions(this->homingMissiles);
 }
 
 Asteroid* Game::findAsteroidUnderCrosshair()
@@ -460,35 +379,55 @@ bool Game::checkCollisions(std::pair<float, float> firstPos, std::pair<int, int>
 
 void Game::checkPlayerCollisions()
 {
-	std::pair<int, int> playerPos = player->getPos();
-	std::pair<int, int> playerSpriteSize = player->getPlayerSpriteSize();
+	auto playerPos = this->player->getPos();
+	auto playerSpriteSize = this->player->getPlayerSpriteSize();
 
-	for (size_t j = 0; j < asteroids.size(); j++)
+	for (size_t j = 0; j < this->asteroids.size(); j++)
 	{
-		std::pair<int, int> asteroidPos = asteroids[j]->getPos();
-		std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
+		auto asteroidPos = this->asteroids[j]->getPos();
+		auto asteroidSpriteSize = this->asteroids[j]->getAsteroidSpriteSize();
 
-		if (checkCollisions(playerPos, playerSpriteSize, asteroidPos, asteroidSpriteSize))
+		if (this->checkCollisions(playerPos, playerSpriteSize, asteroidPos, asteroidSpriteSize))
 			this->restart();
 	}
 }
 
 void Game::restart()
 {
-	delete player;
-	delete crosshair;
-	for (size_t i = 0; i < bullets.size(); i++)
+	delete this->shield;
+	delete this->activatedUpgrade;
+	this->isAutoBulletsActivated = false;
+	this->isShieldActivated = false;
+	this->isHomingMissileActivated = false;
+	delete this->player;
+	delete this->crosshair;
+	delete this->map;
+	for (size_t i = 0; i < this->bullets.size(); i++)
 	{
-		delete bullets[i];
+		delete this->bullets[i];
 	}
-	for (size_t i = 0; i < asteroids.size(); i++)
+	for (size_t i = 0; i < this->asteroids.size(); i++)
 	{
-		delete asteroids[i];
+		delete this->asteroids[i];
+	}
+	for (size_t i = 0; i < this->autoBullets.size(); i++)
+	{
+		delete this->autoBullets[i];
+	}
+	for (size_t i = 0; i < this->homingMissiles.size(); i++)
+	{
+		delete this->homingMissiles[i];
+	}
+	for (size_t i = 0; i < this->upgrades.size(); i++)
+	{
+		delete this->upgrades[i];
 	}
 	this->bullets.clear();
 	this->asteroids.clear();
+	this->autoBullets.clear();
+	this->upgrades.clear();
+	this->homingMissiles.clear();
 	this->Init();
-	
 }
 
 void Game::inertia()
@@ -518,7 +457,7 @@ void Game::inertia()
 			break;
 		}
 	}
-	this->map->updatePos(left, right, up, down, asteroids, bullets, autoBullets, upgrades);
+	this->map->updatePos(left, right, up, down, asteroids, bullets, autoBullets, homingMissiles, upgrades);
 }
 
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {
@@ -742,4 +681,61 @@ void Game::updateAndDrawBullets()
 const char* Game::GetTitle()
 {
 	return "asteroids";
+}
+
+void Game::checkAllBulletsOutOfBounds()
+{
+	for (size_t i = 0; i < autoBullets.size(); i++)
+	{
+		checkBulletsOutOfBounds(autoBullets[i]);
+	}
+	for (size_t i = 0; i < bullets.size(); i++)
+	{
+		checkBulletsOutOfBounds(bullets[i]);
+	}
+	for (size_t i = 0; i < homingMissiles.size(); i++)
+	{
+		checkBulletsOutOfBounds(homingMissiles[i]);
+	}
+}
+
+void Game::checkBulletsCollisions(std::vector<Bullet*>& b)
+{
+	for (size_t i = 0; i < b.size(); i++)
+	{
+		std::pair<float, float> bulletPos = b[i]->getPos();
+		std::pair<int, int> bpriteSize = b[i]->getBulletSpriteSize();
+
+		for (size_t j = 0; j < asteroids.size(); j++)
+		{
+			std::pair<int, int> asteroidPos = asteroids[j]->getPos();
+			std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
+
+			if (this->checkCollisions(bulletPos, bpriteSize, asteroidPos, asteroidSpriteSize))
+			{
+				b[i]->~Bullet();
+				b.erase(b.begin() + i);
+
+				if (!asteroids[j]->getIsSmall())
+				{
+					auto newAsteroids = asteroids[j]->split();
+					asteroids.push_back(newAsteroids.first);
+					asteroids.push_back(newAsteroids.second);
+				}
+				if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) <= this->abilityProbability)
+				{
+					std::pair<float, float> upgradePos;
+					upgradePos.first = this->asteroids[j]->getPos().first + this->asteroids[j]->getAsteroidSpriteSize().first / 2;
+					upgradePos.second = this->asteroids[j]->getPos().second + this->asteroids[j]->getAsteroidSpriteSize().second / 2;
+
+					Upgrade* upgrade = new Upgrade(upgradePos);
+					this->upgrades.push_back(upgrade);
+				}
+				this->asteroids[j]->~Asteroid();
+				this->asteroids.erase(this->asteroids.begin() + j);
+				i = 0;
+				break;
+			}
+		}
+	}
 }

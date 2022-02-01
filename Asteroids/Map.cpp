@@ -1,7 +1,7 @@
 #include "Map.h"
 #include <iostream>
 
-Map::Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight)
+Map::Map(unsigned int &mapWidth, unsigned int &mapHeight, int windowWidth, int windowHeight)
 {
 	this->sprite = createSprite("..\\data\\background.png");
 	getSpriteSize(sprite, this->spriteWidth, this->spriteHeight);
@@ -10,6 +10,9 @@ Map::Map(int mapWidth, int mapHeight, int windowWidth, int windowHeight)
 		
 	this->mapWidth = this->spriteWidth * this->countWidth;
 	this->mapHeight = this->spriteHeight * this->countHeight;
+
+	mapWidth = this->mapWidth;
+	mapHeight = this->mapHeight;
 
 	this->x = (windowWidth - spriteWidth * countWidth) / 2;
 	this->y = (windowHeight - spriteHeight * countHeight) / 2;
@@ -70,7 +73,7 @@ void Map::move(int dirX, int dirY)
 	}
 }
 
-void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Upgrade*> upgrades)
+void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades)
 {
 	float difference = 0.004f;
 	if (velocityX > 0 && !left)
@@ -118,6 +121,10 @@ void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Aster
 		{
 			autoBullets[i]->x = autoBullets[i]->x + this->velocityX * this->movementSpeed;
 		}
+		for (size_t i = 0; i < homingMissiles.size(); i++)
+		{
+			homingMissiles[i]->x = homingMissiles[i]->x + this->velocityX * this->movementSpeed;
+		}
 	}
 	if (!up && !down)
 	{
@@ -138,6 +145,10 @@ void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Aster
 		{
 			autoBullets[i]->y = autoBullets[i]->y + this->velocityY * this->movementSpeed;
 		}
+		for (size_t i = 0; i < homingMissiles.size(); i++)
+		{
+			homingMissiles[i]->y = homingMissiles[i]->y + this->velocityY * this->movementSpeed;
+		}
 	}
 }
 
@@ -151,7 +162,7 @@ std::pair<float, float> Map::getPos()
 	return std::pair<float, float>(this->x, this->y);
 }
 
-void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Upgrade*> upgrades, int xBefore, int yBefore, bool vertical, bool horisontal)
+void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades, int xBefore, int yBefore, bool vertical, bool horisontal)
 {
 	if (vertical)
 	{
@@ -173,6 +184,11 @@ void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*
 		for (size_t i = 0; i < upgrades.size(); i++)
 		{
 			upgrades[i]->x = this->x - xBefore + upgrades[i]->x;
+		}
+
+		for (size_t i = 0; i < homingMissiles.size(); i++)
+		{
+			homingMissiles[i]->x = this->x - xBefore + homingMissiles[i]->x;
 		}
 	}
 	if (horisontal)
@@ -196,6 +212,11 @@ void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*
 		{
 			upgrades[i]->y = this->y - yBefore + upgrades[i]->y;
 		}
+
+		for (size_t i = 0; i < homingMissiles.size(); i++)
+		{
+			homingMissiles[i]->y = this->y - yBefore + homingMissiles[i]->y;
+		}
 	}
 }
 
@@ -209,7 +230,7 @@ std::pair<int, int> Map::getMapSize()
 	return std::pair<int, int>(this->mapWidth, this->mapHeight);
 }
 
-void Map::flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Upgrade*> upgrades, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
+void Map::flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
 {
 	int xBefore = this->x;
 	int yBefore = this->y;
@@ -217,18 +238,18 @@ void Map::flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, s
 	if (byX == -1)
 	{
 		this->x = windowSize.first - mapWidth - this->x;
-		flipObjectsOnMap(asteroids, bullets, autoBullets, upgrades, xBefore, yBefore, true, false);
+		flipObjectsOnMap(asteroids, bullets, autoBullets, homingMissiles, upgrades, xBefore, yBefore, true, false);
 	}
 	// right
 	else if (byX == 1)
 	{
 		this->x = windowSize.first - mapWidth - this->x - 1;
-		flipObjectsOnMap(asteroids, bullets, autoBullets, upgrades, xBefore, yBefore, true, false);
+		flipObjectsOnMap(asteroids, bullets, autoBullets, homingMissiles, upgrades, xBefore, yBefore, true, false);
 	}
 	// up & down
 	if (byY == -1 || byY == 1)
 	{
 		this->y = windowSize.second - mapHeight - this->y;
-		flipObjectsOnMap(asteroids, bullets, autoBullets, upgrades, xBefore, yBefore, false, true);
+		flipObjectsOnMap(asteroids, bullets, autoBullets, homingMissiles, upgrades, xBefore, yBefore, false, true);
 	}
 }
