@@ -22,11 +22,15 @@ private:
 	std::vector<Asteroid*> asteroids;
 	std::vector<Bullet*> bullets;
 	std::vector<Bullet*> autoBullets;
+	std::vector<Bullet*> homingMissiles;
 	std::vector<Upgrade*> upgrades;
 	Upgrade* activatedUpgrade;
 	Shield* shield;
+
 	bool isShieldActivated;
 	bool isAutoBulletsActivated;
+	bool isHomingMissileActivated;
+
 	unsigned int startUpgradeTime;
 	unsigned int upgradeSecondsDuration = 7;
 	// input
@@ -51,6 +55,8 @@ private:
 	void onKeyPressed(FRKey k) override;
 	void onKeyReleased(FRKey k) override;
 
+
+	Asteroid* findAsteroidUnderCrosshair();
 	bool checkCollisionsWithCircle(std::pair<float, float> spriteObjectPos, std::pair<int, int> spriteObjectSize,
 		std::pair<float, float> shieldPos, float radius);
 	void checkShieldCollisions();

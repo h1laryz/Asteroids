@@ -8,10 +8,17 @@ int Bullet::getCount()
 	return Bullet::count;
 }
 
-Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet)
+Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet, Asteroid* aim)
 {
-	if (!autoBullet) this->sprite = createSprite("..\\data\\bullet.png");
-	else this->sprite = createSprite("..\\data\\autobullet.png");
+	if (autoBullet) this->sprite = createSprite("..\\data\\autobullet.png"); 
+	else if (aim != nullptr)
+	{
+		this->sprite = createSprite("..\\data\\homingmissile.png");
+		this->asteroid = aim;
+		this->asteroidStartPos.first = this->asteroid->getPos().first + this->asteroid->getAsteroidSpriteSize().first;
+		this->asteroidStartPos.second = this->asteroid->getPos().second + this->asteroid->getAsteroidSpriteSize().second;
+	}
+	else this->sprite = createSprite("..\\data\\bullet.png");
 
 	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
 
@@ -49,6 +56,17 @@ void Bullet::move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets
 
 void Bullet::update()
 {
+	if (this->asteroid != nullptr)
+	{
+		this->aimDir.first = this->asteroid->getPos().first + this->asteroid->getAsteroidSpriteSize().first / 2 - this->x;
+		this->aimDir.second = this->asteroid->getPos().second + this->asteroid->getAsteroidSpriteSize().second / 2 - this->y;
+
+		this->aimDirNorm.first = this->aimDir.first / sqrt(pow(this->aimDir.first, 2) + pow(this->aimDir.second, 2));
+		this->aimDirNorm.second = this->aimDir.second / sqrt(pow(this->aimDir.first, 2) + pow(this->aimDir.second, 2));
+
+		this->currVelocity.first = this->aimDirNorm.first * this->speed;
+		this->currVelocity.second = this->aimDirNorm.second * this->speed;
+	}
 	this->x += this->currVelocity.first;
 	this->y += this->currVelocity.second;
 }

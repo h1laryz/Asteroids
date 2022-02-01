@@ -38,7 +38,7 @@ void Upgrade::move(std::vector<Upgrade*> upgrades, int dirX, int dirY, int movem
 
 Upgrade::Upgrade(std::pair<float, float> pos)
 {
-	int random = rand() % 2;
+	int random = rand() % 3;
 	if (random == 0)
 	{
 		this->sprite = createSprite("..\\data\\shield.png");
@@ -51,7 +51,8 @@ Upgrade::Upgrade(std::pair<float, float> pos)
 	}
 	else if (random == 2)
 	{
-
+		this->sprite = createSprite("..\\data\\rocketicon.png");
+		this->upgradeName = "homingmissile";
 	}
 
 	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);

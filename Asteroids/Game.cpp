@@ -328,7 +328,7 @@ void Game::spawnAsteroids()
 
 void Game::checkAsteroidsCollisions()
 {
-	for (size_t i = 0; i < asteroids.size(); i++)
+	/*for (size_t i = 0; i < asteroids.size(); i++)
 	{
 		for (size_t j = 1; j < asteroids.size(); j++)
 		{
@@ -336,11 +336,11 @@ void Game::checkAsteroidsCollisions()
 			{
 				if (Asteroid::checkCollisions(asteroids[i], asteroids[j])) 
 				{
-					//Asteroid::brownianMotion(asteroids[i], asteroids[j]);
+					Asteroid::brownianMotion(asteroids[i], asteroids[j]);
 				}
 			}
 		}
-	}
+	}*/
 }
 
 void Game::checkAllBulletsCollisions()
@@ -420,6 +420,18 @@ void Game::checkAllBulletsCollisions()
 			}
 		}
 	}
+}
+
+Asteroid* Game::findAsteroidUnderCrosshair()
+{
+	for (size_t i = 0; i < asteroids.size(); i++)
+	{
+		if (this->checkCollisions(this->crosshair->getPos(), this->crosshair->getCrosshairSpriteSize(), this->asteroids[i]->getPos(), this->asteroids[i]->getAsteroidSpriteSize()))
+		{
+			return asteroids[i];
+		}
+	}
+	return nullptr;
 }
 
 bool Game::checkCollisions(std::pair<float, float> firstPos, std::pair<int, int> firstSpriteSize, std::pair<float, float> secondPos, std::pair<int, int> secondSpriteSize)
@@ -528,7 +540,24 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 				(this->crosshair->getPos().first + this->crosshair->getCrosshairSpriteSize().first / 2,
 					this->crosshair->getPos().second + this->crosshair->getCrosshairSpriteSize().second / 2)));
 		}
-			
+		break;
+
+	case FRMouseButton::RIGHT:
+		if (isReleased)
+		{
+			unsigned int elapsedTime = getTickCount() - startUpgradeTime;
+			if (this->isHomingMissileActivated && elapsedTime / 1000 < this->upgradeSecondsDuration)
+			{
+				Asteroid* ast = findAsteroidUnderCrosshair();
+				if (ast != nullptr)
+				{
+					Bullet* bullet = new Bullet(std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2,
+						this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2),
+						std::make_pair(ast->getPos().first + ast->getAsteroidSpriteSize().first / 2, ast->getPos().second + ast->getAsteroidSpriteSize().second / 2), false, ast);
+					homingMissiles.push_back(bullet);
+				}
+			}
+		}
 		break;
 	}
 }
@@ -581,18 +610,28 @@ void Game::checkUpgradeBeingTaken()
 			this->activatedUpgrade = upgrades[i];
 			this->isShieldActivated = false;
 			this->isAutoBulletsActivated = false;
+			this->isHomingMissileActivated = false;
 
 			auto newPos = std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2, this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2);
 			if (this->activatedUpgrade->getUpgradeName() == "shield")
 			{
 				this->isShieldActivated = true;
 				this->isAutoBulletsActivated = false;
+				this->isHomingMissileActivated = false;
 				this->startUpgradeTime = getTickCount();
 			}
 			else if (this->activatedUpgrade->getUpgradeName() == "autobullets")
 			{
 				this->isShieldActivated = false;
 				this->isAutoBulletsActivated = true;
+				this->isHomingMissileActivated = false;
+				this->startUpgradeTime = getTickCount();
+			}
+			else if (this->activatedUpgrade->getUpgradeName() == "homingmissile")
+			{
+				this->isShieldActivated = false;
+				this->isAutoBulletsActivated = false;
+				this->isHomingMissileActivated = true;
 				this->startUpgradeTime = getTickCount();
 			}
 			this->upgrades.erase(this->upgrades.begin() + i);
@@ -628,7 +667,7 @@ void Game::updateUpgrade()
 				if (asteroids[i]->checkTooCloseToPlayer(this->player->getPos(), this->player->getPlayerSpriteSize()) && !asteroids[i]->getAutoBulletTryToHit())
 				{
 					Bullet* autoBullet = new Bullet(std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2, this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2),
-						std::make_pair(asteroids[i]->getPos().first + asteroids[i]->getAsteroidSpriteSize().first / 2, asteroids[i]->getPos().second + asteroids[i]->getAsteroidSpriteSize().second / 2), true);
+						std::make_pair(asteroids[i]->getPos().first + asteroids[i]->getAsteroidSpriteSize().first / 2, asteroids[i]->getPos().second + asteroids[i]->getAsteroidSpriteSize().second / 2), true, nullptr);
 					autoBullets.push_back(autoBullet);
 					asteroids[i]->setAutoBulletTryToHit(true);
 				}
@@ -644,6 +683,21 @@ void Game::updateUpgrade()
 		else
 		{
 			isAutoBulletsActivated = false;
+			this->activatedUpgrade->~Upgrade();
+			this->activatedUpgrade = nullptr;
+		}
+	}
+	if (isHomingMissileActivated)
+	{
+		unsigned int elapsedTime = getTickCount() - startUpgradeTime;
+		if (elapsedTime / 1000 >= this->upgradeSecondsDuration)
+		{
+			for (size_t i = 0; i < homingMissiles.size(); i++)
+			{
+				this->homingMissiles[i]->~Bullet();
+			}
+			this->homingMissiles.clear();
+			this->isHomingMissileActivated = false;
 			this->activatedUpgrade->~Upgrade();
 			this->activatedUpgrade = nullptr;
 		}
@@ -677,6 +731,11 @@ void Game::updateAndDrawBullets()
 	{
 		autoBullets[i]->update();
 		autoBullets[i]->draw();
+	}
+	for (size_t i = 0; i < homingMissiles.size(); i++)
+	{
+		homingMissiles[i]->update();
+		homingMissiles[i]->draw();
 	}
 }
 

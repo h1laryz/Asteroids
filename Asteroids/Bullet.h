@@ -2,6 +2,7 @@
 #include <utility>
 #include <vector>
 #include "Framework.h"
+#include "Asteroid.h"
 
 class Bullet
 {
@@ -14,9 +15,12 @@ private:
 	std::pair<float, float> aimDirNorm;
 	std::pair<float, float> currVelocity;
 	float speed;
+
+	Asteroid* asteroid;
+	std::pair<float, float> asteroidStartPos;
 public:
 	static int getCount();
-	Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet);
+	Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet, Asteroid* aim);
 	static void move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, int dirX, int dirY, int movementSpeed);
 	void update();
 	void draw();

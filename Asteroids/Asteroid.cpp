@@ -56,6 +56,11 @@ void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> pla
 	} while (collision);
 }
 
+std::pair<float, float> Asteroid::getVelocity()
+{
+	return this->currVelocity;
+}
+
 void Asteroid::setAutoBulletTryToHit(bool flag)
 {
 	this->autoBulletTryToHit = flag;
@@ -248,8 +253,14 @@ void Asteroid::brownianMotion(Asteroid* first, Asteroid* second)
 	//	//secondVelocity.second = second->currVelocity.second - fabs(first->currVelocity.second);
 	//	firstVelocity.second = second->currVelocity.second + (fabs(first->currVelocity.second) - fabs(second->currVelocity.second));
 	//}
-	first->currVelocity = secondVelocity;
-	second->currVelocity = firstVelocity;
+	//first->currVelocity = secondVelocity;
+	//second->currVelocity = firstVelocity;
+
+	first->currVelocity.first = -first->currVelocity.first;
+	first->currVelocity.second = -first->currVelocity.second;
+
+	second->currVelocity.first = -first->currVelocity.first;
+	second->currVelocity.second = -second->currVelocity.second;
 }
 
 

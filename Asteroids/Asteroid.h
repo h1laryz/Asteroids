@@ -23,6 +23,7 @@ private:
 	void initPos(std::vector<Asteroid*> asteroids, std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize,
 		std::pair<int, int> mapSize, std::pair<int, int> mapPos);
 public:
+	std::pair<float, float> getVelocity();
 	void setAutoBulletTryToHit(bool flag);
 	bool getAutoBulletTryToHit();
 	bool checkTooCloseToPlayer(std::pair<int, int> playerPos, std::pair<int, int> playerSpriteSize);
