@@ -27,15 +27,19 @@ private:
 	Upgrade* activatedUpgrade;
 	Shield* shield;
 
+	// is upgrade activated
 	bool isShieldActivated;
 	bool isAutoBulletsActivated;
 	bool isHomingMissileActivated;
 
+	// for calculating time of upgrade
 	unsigned int startUpgradeTime;
 	unsigned int upgradeSecondsDuration = 7;
+
 	// input
 	std::vector<FRKey> inputtedKeys;
-	// params
+
+	// params of game
 	unsigned int windowWidth, 
 		windowHeight, 
 		mapWidth, 
@@ -55,35 +59,42 @@ private:
 	void onKeyPressed(FRKey k) override;
 	void onKeyReleased(FRKey k) override;
 
-
+	// private methods
 	Asteroid* findAsteroidUnderCrosshair();
+	void move(FRKey k);
+	void restart();
+	void inertia();
+	void checkKeys();
+
+	// check collisions
+	void checkAsteroidsCollisions();
+	void checkAllBulletsCollisions();
 	bool checkCollisionsWithCircle(std::pair<float, float> spriteObjectPos, std::pair<int, int> spriteObjectSize,
 		std::pair<float, float> shieldPos, float radius);
-	void updateUpgrade();
 	bool checkCollisions(std::pair<float, float> firstPos, std::pair<int, int> firstSpriteSize, std::pair<float, float> secondPos, std::pair<int, int> secondSpriteSize);
-	void checkUpgradeBeingTaken();
-	void drawUpgrades();
-	void checkKeys();
-	void updateAndDrawBullets();
-	void move(FRKey k);
+	void checkBulletsCollisions(std::vector<Bullet*>& b);
+	void checkPlayerCollisions();
+
+	// check out of bounds
 	void checkOutOfBounds();
 	void checkAllBulletsOutOfBounds();
 	void checkPlayerOutOfBounds();
 	void checkBulletsOutOfBounds(Bullet* bullet);
 	void checkAsteroidsOutOfBounds();
+
+	// Update / draw
+	void updateUpgrade();
+	void checkUpgradeBeingTaken();
+	void drawUpgrades();
 	void spawnAsteroids();
-	void checkAsteroidsCollisions();
-	void checkAllBulletsCollisions();
-	void checkBulletsCollisions(std::vector<Bullet*>& b);
-	void checkPlayerCollisions();
-	void restart();
-	void inertia();
+	void updateAndDrawBullets();
 public:
+	// Constructors / destructors
 	Game();
 	Game(int argc, char** argv);
-	virtual ~Game();
-	
-	virtual const char* GetTitle() override;
+	~Game();
 
+	// Getters
+	const char* GetTitle() override;
 };
 

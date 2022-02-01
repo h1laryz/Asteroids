@@ -51,7 +51,7 @@ public:
 	// static
 	static bool checkCollisions(Asteroid* first, Asteroid* second);
 	static void brownianMotion(Asteroid* first, Asteroid* second);
-	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed);
+	static void move(std::vector<Asteroid*> asteroids, int dirX, int dirY, float movementSpeed);
 
 	// friends
 	friend class Map;

@@ -18,15 +18,27 @@ private:
 
 	Asteroid* asteroid;
 public:
+	// static
 	static int getCount();
-	Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet, Asteroid* aim);
-	static void move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, int dirX, int dirY, int movementSpeed);
+	static void move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, int dirX, int dirY, float movementSpeed);
+
+	// Constructors / destructors
+	Bullet(std::pair<float, float> playerPos, std::pair<int, int> crosshairPos, bool autoBullet, Asteroid* aim);
+	~Bullet();
+
+	// Getters
+	std::pair<float, float> getPos() const;
+	std::pair<int, int> getBulletSpriteSize() const;
+
+	// Setters
+
+
+	// Methods
 	void update();
 	void draw();
-	~Bullet();
-	std::pair<float, float> getPos();
-	std::pair<int, int> getBulletSpriteSize();
 	void flip(int byX, int byY, std::pair<int, int> mapSize);
+
+	// Friends
 	friend class Map;
 };
 

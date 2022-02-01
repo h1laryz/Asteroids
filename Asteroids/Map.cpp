@@ -14,8 +14,8 @@ Map::Map(unsigned int &mapWidth, unsigned int &mapHeight, int windowWidth, int w
 	mapWidth = this->mapWidth;
 	mapHeight = this->mapHeight;
 
-	this->x = (windowWidth - spriteWidth * countWidth) / 2;
-	this->y = (windowHeight - spriteHeight * countHeight) / 2;
+	this->x = (float)(windowWidth - spriteWidth * countWidth) / 2;
+	this->y = (float)(windowHeight - spriteHeight * countHeight) / 2;
 
 	this->movementSpeed = 1;
 }
@@ -31,19 +31,14 @@ void Map::drawMap()
 	{
 		for (int j = 0; j < countHeight; j++)
 		{
-			drawSprite(this->sprite, x + i * (this->spriteWidth), y + j * (this->spriteHeight));
+			drawSprite(this->sprite, int(x + i * (this->spriteWidth)), int(y + j * (this->spriteHeight)));
 		}
 	}
 }
 
-void Map::destroy()
+float Map::getMovementSpeed()
 {
-	this->~Map();
-}
-
-int Map::getMovementSpeed()
-{
-	return movementSpeed;
+	return this->movementSpeed;
 }
 
 void Map::calculateCountOfSprites(int mapWidth, int mapHeight)
@@ -63,12 +58,12 @@ void Map::move(int dirX, int dirY)
 {
 	if (dirX != 0)
 	{
-		this->velocityX = dirX;
+		this->velocityX = (float)dirX;
 		this->x = this->x + this->velocityX * this->movementSpeed;
 	}
 	if (dirY != 0)
 	{
-		this->velocityY = dirY;
+		this->velocityY = (float)dirY;
 		this->y = this->y + this->velocityY * this->movementSpeed;
 	}
 }
@@ -152,17 +147,24 @@ void Map::updatePos(bool left, bool right, bool up, bool down, std::vector<Aster
 	}
 }
 
-void Map::getMapSpriteSize(int& w, int& h)
-{
-	getSpriteSize(this->sprite, w, h);
-}
-
-std::pair<float, float> Map::getPos()
+std::pair<float, float> Map::getPos() const
 {
 	return std::pair<float, float>(this->x, this->y);
 }
 
-void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades, int xBefore, int yBefore, bool vertical, bool horisontal)
+/// <summary>
+/// if player is out of bounds moves map and all objects
+/// </summary>
+/// <param name="asteroids"></param>
+/// <param name="bullets"></param>
+/// <param name="autoBullets"></param>
+/// <param name="homingMissiles"></param>
+/// <param name="upgrades"></param>
+/// <param name="xBefore"></param>
+/// <param name="yBefore"></param>
+/// <param name="vertical"></param>
+/// <param name="horisontal"></param>
+void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades, float xBefore, float yBefore, bool vertical, bool horisontal)
 {
 	if (vertical)
 	{
@@ -220,20 +222,20 @@ void Map::flipObjectsOnMap(std::vector<Asteroid*> asteroids, std::vector<Bullet*
 	}
 }
 
-std::pair<int, int> Map::getCountSprites()
+std::pair<int, int> Map::getCountSprites() const
 {
 	return std::pair<int, int>(this->countWidth, this->countHeight);
 }
 
-std::pair<int, int> Map::getMapSize()
+std::pair<int, int> Map::getMapSize() const
 {
 	return std::pair<int, int>(this->mapWidth, this->mapHeight);
 }
 
 void Map::flip(std::vector<Asteroid*> asteroids, std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, std::vector<Upgrade*> upgrades, int byX, int byY, std::pair<int, int> playerSpriteSize, std::pair<int, int> windowSize)
 {
-	int xBefore = this->x;
-	int yBefore = this->y;
+	float xBefore = this->x;
+	float yBefore = this->y;
 	// left
 	if (byX == -1)
 	{

@@ -1,33 +1,11 @@
 #include "Upgrade.h"
 
-Upgrade::Upgrade()
-{
-	this->x = 0;
-	this->y = 0;
-
-	int random = rand() % 3;
-	if (random == 0)
-	{
-		this->sprite = createSprite("..\\data\\shield.png");
-	}
-	else if (random == 1)
-	{
-		this->sprite = createSprite("..\\data\\autobulleticon.png");
-	}
-	else if (random == 2)
-	{
-
-	}
-
-	getSpriteSize(this->sprite, this->spriteWidth, this->spriteHeight);
-}
-
 std::string Upgrade::getUpgradeName()
 {
 	return upgradeName;
 }
 
-void Upgrade::move(std::vector<Upgrade*> upgrades, int dirX, int dirY, int movementSpeed)
+void Upgrade::move(std::vector<Upgrade*> upgrades, int dirX, int dirY, float movementSpeed)
 {
 	for (size_t i = 0; i < upgrades.size(); i++)
 	{

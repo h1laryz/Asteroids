@@ -13,8 +13,7 @@ class Upgrade
 
 public:
 	std::string getUpgradeName();
-	static void move(std::vector<Upgrade*> upgrades, int dirX, int dirY, int movementSpeed);
-	Upgrade();
+	static void move(std::vector<Upgrade*> upgrades, int dirX, int dirY, float movementSpeed);
 	Upgrade(std::pair<float, float> pos);
 	~Upgrade();
 	void draw();

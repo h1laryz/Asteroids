@@ -32,6 +32,14 @@ Asteroid::Asteroid()
 	count++;
 }
 
+/// <summary>
+/// Inits the position of new asteroid
+/// </summary>
+/// <param name="asteroids">All asteroids on map</param>
+/// <param name="playerPos">Player position</param>
+/// <param name="playerSpriteSize">Player sprite size</param>
+/// <param name="mapSize">Map size</param>
+/// <param name="mapPos">Map position</param>
 void Asteroid::initPos(std::vector<Asteroid*> asteroids, std::pair<float, float> playerPos, std::pair<int, int> playerSpriteSize,
 	std::pair<int, int> mapSize, std::pair<float, float> mapPos)
 {
@@ -60,7 +68,12 @@ void Asteroid::setAutoBulletTryToHit(bool flag)
 	this->autoBulletTryToHit = flag;
 }
 
-
+/// <summary>
+/// Check if asteroid is too close to player
+/// </summary>
+/// <param name="playerPos">player position</param>
+/// <param name="playerSpriteSize">player sprite size</param>
+/// <returns>true if close, false if not</returns>
 bool Asteroid::checkTooCloseToPlayer(std::pair<float, float> playerPos, std::pair<int, int> playerSpriteSize)
 {
 	int range = 0;
@@ -77,12 +90,18 @@ bool Asteroid::checkTooCloseToPlayer(std::pair<float, float> playerPos, std::pai
 	centerOfAsteroid.first = this->x + spriteWidth / 2;
 	centerOfAsteroid.second = this->y + spriteHeight / 2;
 
-	if (fabs(centerOfAsteroid.first - centerOfPlayer.first) <= range && fabs(centerOfAsteroid.second - centerOfPlayer.second) <= range)
+	if (fabs(centerOfAsteroid.first - centerOfPlayer.first) <= (float)range && fabs(centerOfAsteroid.second - centerOfPlayer.second) <= (float)range)
 		return true;
 
 	return false;
 }
 
+/// <summary>
+/// Checking if 2 asteroids collide with each other
+/// </summary>
+/// <param name="first"> - first asteroid</param>
+/// <param name="second"> - second asteroid</param>
+/// <returns>true if collide, false if not</returns>
 bool Asteroid::checkCollisions(Asteroid* first, Asteroid* second)
 {
 	bool xCollision = false;
@@ -131,7 +150,6 @@ Asteroid::Asteroid(bool isSmall)
 	count++;
 }
 
-
 Asteroid::Asteroid(std::pair<float, float> pos, bool isSmall)
 {
 	this->x = pos.first;
@@ -164,7 +182,6 @@ Asteroid::Asteroid(std::vector<Asteroid*> asteroids, std::pair<float, float> pla
 	std::pair<int, int> mapSize, std::pair<float, float> mapPos) : Asteroid()
 {
 	this->initPos(asteroids, playerPos, playerSpriteSize, mapSize, mapPos);
-	
 }
 
 Asteroid::~Asteroid()
@@ -173,7 +190,14 @@ Asteroid::~Asteroid()
 	count--;
 }
 
-void Asteroid::move(std::vector<Asteroid*> asteroids, int dirX, int dirY, int movementSpeed)
+/// <summary>
+/// Moves all aseroids
+/// </summary>
+/// <param name="asteroids"> - all asteroids</param>
+/// <param name="dirX">x direction (-1 - left, 1 - right)</param>
+/// <param name="dirY">y direction (-1 - down, 1 - up)</param>
+/// <param name="movementSpeed"></param>
+void Asteroid::move(std::vector<Asteroid*> asteroids, int dirX, int dirY, float movementSpeed)
 {
 	for (size_t i = 0; i < asteroids.size(); i++)
 	{
@@ -208,6 +232,11 @@ void Asteroid::drawAsteroid()
 	drawSprite(this->sprite, roundf(this->x), roundf(this->y));
 }
 
+/// <summary>
+/// Does physics when 2 asteroids collide
+/// </summary>
+/// <param name="first"> - 1st asteroid</param>
+/// <param name="second"> - 2nd asteroid</param>
 void Asteroid::brownianMotion(Asteroid* first, Asteroid* second)
 {
 	std::pair<float, float> firstVelocity = first->currVelocity;
@@ -286,6 +315,10 @@ void Asteroid::update()
 	this->y += this->currVelocity.second;
 }
 
+/// <summary>
+/// Splits big asteroid on 2 small
+/// </summary>
+/// <returns>If you are trying to split small - pair of nullptr. If big - pair of 2 new small asteroids</returns>
 std::pair<Asteroid*, Asteroid*> Asteroid::split()
 {
 	if (this->isSmall)

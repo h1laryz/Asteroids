@@ -9,6 +9,9 @@ Player::Player(int windowWidth, int windowHeight)
 	this->x = static_cast<float>((windowWidth - spriteWidth)) / 2;
 	this->y = static_cast<float>((windowHeight - spriteHeight)) / 2;
 
+	this->velocityX = 0.0f;
+	this->velocityY = 0.0f;
+
 	this->movementSpeed = 1.0f;
 }
 
@@ -19,7 +22,7 @@ Player::~Player()
 
 void Player::drawPlayer()
 {
-	drawSprite(this->sprite, this->x, this->y);
+	drawSprite(this->sprite, (int)this->x, (int)this->y);
 }
 
 void Player::destroy()
@@ -29,8 +32,8 @@ void Player::destroy()
 
 void Player::move(int dirX, int dirY)
 {
-	this->velocityX = dirX;
-	this->velocityY = dirY;
+	this->velocityX = (float)dirX;
+	this->velocityY = (float)dirY;
 	this->x = this->x + this->velocityX * this->movementSpeed;
 	this->y = this->y + this->velocityY * this->movementSpeed;
 }

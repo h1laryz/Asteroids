@@ -7,16 +7,19 @@ class Crosshair
 private:
 	Sprite* sprite;
 	int spriteWidth, spriteHeight;
-	int x, y;
+	float x, y;
 
 public:
+	// Constructors / destructors
 	Crosshair(int windowWidth, int windowHeight);
 	~Crosshair();
-	void update(int x, int y);
+
+	// Methods
+	void update(float x, float y);
 	void draw();
-	void destroy();
-	void move();
-	std::pair<int, int> getPos();
-	std::pair<int, int> getCrosshairSpriteSize();
+
+	// Getters
+	std::pair<float, float> getPos() const;
+	std::pair<int, int> getCrosshairSpriteSize() const;
 };
 

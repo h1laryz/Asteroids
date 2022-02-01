@@ -23,6 +23,12 @@ Game::Game()
 	this->crosshair = nullptr;
 	this->activatedUpgrade = nullptr;
 	this->shield = nullptr;
+
+	this->isAutoBulletsActivated = false;
+	this->isShieldActivated = false;
+	this->isHomingMissileActivated = false;
+
+	this->startUpgradeTime = 0;
 }
 
 Game::Game(int argc, char** argv) : Game()
@@ -99,6 +105,10 @@ Game::~Game()
 	}
 }
 
+/// <summary>
+/// Moves all objects on map
+/// </summary>
+/// <param name="k"> - depends on key moves in that direction</param>
 void Game::move(FRKey k)
 {
 	switch (k)
@@ -133,6 +143,9 @@ void Game::move(FRKey k)
 	}
 }
 
+/// <summary>
+/// Calls all out of bounds checks
+/// </summary>
 void Game::checkOutOfBounds()
 {
 	this->checkPlayerOutOfBounds();
@@ -140,6 +153,14 @@ void Game::checkOutOfBounds()
 	this->checkAsteroidsOutOfBounds();
 }
 
+/// <summary>
+/// Checks if there are collisions beetween circle and rectangle object
+/// </summary>
+/// <param name="spriteObjectPos"> - rectangle object pos</param>
+/// <param name="spriteObjectSize"> - rectangle sprite size</param>
+/// <param name="circlePos"> - circle position</param>
+/// <param name="radius"> - radius of circle</param>
+/// <returns>If they collide returns true</returns>
 bool Game::checkCollisionsWithCircle(std::pair<float, float> spriteObjectPos, std::pair<int, int> spriteObjectSize, std::pair<float, float> circlePos, float radius)
 {
 	circlePos.first = (player->getPos().first + player->getPlayerSpriteSize().first / 2);
@@ -165,8 +186,10 @@ bool Game::checkCollisionsWithCircle(std::pair<float, float> spriteObjectPos, st
 	return (cornerDistance_sq <= (powf(radius, 2)));
 }
 
-
-
+/// <summary>
+/// Moves bullet to another side of map if player is out of bounds
+/// </summary>
+/// <param name="bullet"></param>
 void Game::checkBulletsOutOfBounds(Bullet* bullet) // TODO: pass gameObject* 
 {
 	// check left
@@ -195,6 +218,9 @@ void Game::checkBulletsOutOfBounds(Bullet* bullet) // TODO: pass gameObject*
 
 }
 
+/// <summary>
+/// Checks if asteroids are out of bounds
+/// </summary>
 void Game::checkAsteroidsOutOfBounds()
 {
 	for (size_t i = 0; i < asteroids.size(); i++)
@@ -225,6 +251,9 @@ void Game::checkAsteroidsOutOfBounds()
 	}
 }
 
+/// <summary>
+/// Moves player to another side of map if player is out of bounds
+/// </summary>
 void Game::checkPlayerOutOfBounds()
 {
 	// check left
@@ -252,7 +281,6 @@ void Game::checkPlayerOutOfBounds()
 	}
 }
 
-
 void Game::PreInit(int& width, int& height, bool& fullscreen)
 {
 	width = this->windowWidth;
@@ -260,14 +288,16 @@ void Game::PreInit(int& width, int& height, bool& fullscreen)
 	fullscreen = this->fullscreen;
 }
 
-
+/// <summary>
+/// Inits objects on map
+/// </summary>
+/// <returns>true - ok, false - failed, application will exit</returns>
 bool Game::Init() {
 	this->player = new Player(this->windowWidth, this->windowHeight);
 	this->map = new Map(this->mapWidth, this->mapHeight, this->windowWidth, this->windowHeight);
 	this->crosshair = new Crosshair(this->windowWidth, this->windowHeight);
 	this->shield = new Shield;
 	this->activatedUpgrade = nullptr;
-
 	return true;
 }
 
@@ -295,28 +325,33 @@ bool Game::Tick() {
 	return false;
 }
 
+/// <summary>
+/// Spawn, update, draw asteroids
+/// </summary>
 void Game::spawnAsteroids()
 {
 	size_t countOfAsteroids = Asteroid::getCount();
 
-	for (size_t i = countOfAsteroids; i < numOfAsteroids; i++)
+	for (size_t i = countOfAsteroids; i < this->numOfAsteroids; i++)
 	{
-		Asteroid* asteroid = new Asteroid(asteroids, this->player->getPos(), this->player->getPlayerSpriteSize(), std::pair<int, int>(mapWidth, mapHeight), this->map->getPos());
+		Asteroid* asteroid = new Asteroid(this->asteroids, this->player->getPos(), this->player->getPlayerSpriteSize(), std::pair<int, int>(mapWidth, mapHeight), this->map->getPos());
 		this->asteroids.push_back(asteroid);
 	}
 
 	for (size_t i = 0; i < this->asteroids.size(); i++)
 	{
-		if ((isShieldActivated && !(this->checkCollisionsWithCircle(asteroids[i]->getPos(), asteroids[i]->getAsteroidSpriteSize(), 
-			shield->getPos(), shield->getRadius()))) || !isShieldActivated)
+		if ((this->isShieldActivated && !(this->checkCollisionsWithCircle(this->asteroids[i]->getPos(), this->asteroids[i]->getAsteroidSpriteSize(),
+			this->shield->getPos(), this->shield->getRadius()))) || !this->isShieldActivated)
 		{
 			this->asteroids[i]->update();
 		}
-
 		this->asteroids[i]->drawAsteroid();
 	}
 }
 
+/// <summary>
+/// Check collisions between asteroids
+/// </summary>
 void Game::checkAsteroidsCollisions()
 {
 	/*for (size_t i = 0; i < asteroids.size(); i++)
@@ -334,6 +369,9 @@ void Game::checkAsteroidsCollisions()
 	}*/
 }
 
+/// <summary>
+/// Checks all bullets collisions
+/// </summary>
 void Game::checkAllBulletsCollisions()
 {
 	this->checkBulletsCollisions(this->bullets);
@@ -341,18 +379,30 @@ void Game::checkAllBulletsCollisions()
 	this->checkBulletsCollisions(this->homingMissiles);
 }
 
+/// <summary>
+/// Finds asteroid under crosshair
+/// </summary>
+/// <returns>asteroid under crosshair</returns>
 Asteroid* Game::findAsteroidUnderCrosshair()
 {
-	for (size_t i = 0; i < asteroids.size(); i++)
+	for (size_t i = 0; i < this->asteroids.size(); i++)
 	{
 		if (this->checkCollisions(this->crosshair->getPos(), this->crosshair->getCrosshairSpriteSize(), this->asteroids[i]->getPos(), this->asteroids[i]->getAsteroidSpriteSize()))
 		{
-			return asteroids[i];
+			return this->asteroids[i];
 		}
 	}
 	return nullptr;
 }
 
+/// <summary>
+/// Checks collisions between 2 objects
+/// </summary>
+/// <param name="firstPos"> - position of first object</param>
+/// <param name="firstSpriteSize"> - sprite size of first object</param>
+/// <param name="secondPos"> - position of second object</param>
+/// <param name="secondSpriteSize"> - sprite size of second object</param>
+/// <returns>true if 2 objects collides</returns>
 bool Game::checkCollisions(std::pair<float, float> firstPos, std::pair<int, int> firstSpriteSize, std::pair<float, float> secondPos, std::pair<int, int> secondSpriteSize)
 {
 	bool xCollision = false;
@@ -377,6 +427,9 @@ bool Game::checkCollisions(std::pair<float, float> firstPos, std::pair<int, int>
 	return xCollision && yCollision;
 }
 
+/// <summary>
+/// Checks players collisions with asteroids
+/// </summary>
 void Game::checkPlayerCollisions()
 {
 	auto playerPos = this->player->getPos();
@@ -392,6 +445,9 @@ void Game::checkPlayerCollisions()
 	}
 }
 
+/// <summary>
+/// Restarts game
+/// </summary>
 void Game::restart()
 {
 	delete this->shield;
@@ -430,6 +486,9 @@ void Game::restart()
 	this->Init();
 }
 
+/// <summary>
+/// Inertia of moving of player
+/// </summary>
 void Game::inertia()
 {
 	bool left = false,
@@ -460,22 +519,24 @@ void Game::inertia()
 	this->map->updatePos(left, right, up, down, asteroids, bullets, autoBullets, homingMissiles, upgrades);
 }
 
+// On mouse moving enters here
 void Game::onMouseMove(int x, int y, int xrelative, int yrelative) {
-	this->crosshair->update(x, y);
+	this->crosshair->update((int)x, (int)y);
 }
 
+// On mouse button click enters here
 void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 	switch (button)
 	{
 	case FRMouseButton::LEFT:
 		if (isReleased)
 		{
-			if (bullets.size() == this->numOfBullets)
+			if (this->bullets.size() == this->numOfBullets)
 			{
-				bullets[0]->~Bullet();
-				bullets.erase(bullets.begin());
+				this->bullets[0]->~Bullet();
+				this->bullets.erase(this->bullets.begin());
 			}
-			bullets.push_back(this->player->shoot(std::pair<int, int>
+			this->bullets.push_back(this->player->shoot(std::pair<int, int>
 				(this->crosshair->getPos().first + this->crosshair->getCrosshairSpriteSize().first / 2,
 					this->crosshair->getPos().second + this->crosshair->getCrosshairSpriteSize().second / 2)));
 		}
@@ -493,7 +554,7 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 					Bullet* bullet = new Bullet(std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2,
 						this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2),
 						std::make_pair(ast->getPos().first + ast->getAsteroidSpriteSize().first / 2, ast->getPos().second + ast->getAsteroidSpriteSize().second / 2), false, ast);
-					homingMissiles.push_back(bullet);
+					this->homingMissiles.push_back(bullet);
 				}
 			}
 		}
@@ -501,6 +562,7 @@ void Game::onMouseButtonClick(FRMouseButton button, bool isReleased) {
 	}
 }
 
+// On key pressed enters here
 void Game::onKeyPressed(FRKey k) {
 	switch (k)
 	{
@@ -522,6 +584,7 @@ void Game::onKeyPressed(FRKey k) {
 	}
 }
 
+// On key released enters here
 void Game::onKeyReleased(FRKey k) {
 	for (size_t i = 0; i < this->inputtedKeys.size(); i++)
 	{
@@ -532,6 +595,7 @@ void Game::onKeyReleased(FRKey k) {
 	}
 }
 
+// Activates upgrade that was taken
 void Game::checkUpgradeBeingTaken()
 {
 	auto playerPos = this->player->getPos();
@@ -552,26 +616,19 @@ void Game::checkUpgradeBeingTaken()
 			this->isHomingMissileActivated = false;
 
 			auto newPos = std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2, this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2);
+			this->startUpgradeTime = getTickCount();
+
 			if (this->activatedUpgrade->getUpgradeName() == "shield")
 			{
 				this->isShieldActivated = true;
-				this->isAutoBulletsActivated = false;
-				this->isHomingMissileActivated = false;
-				this->startUpgradeTime = getTickCount();
 			}
 			else if (this->activatedUpgrade->getUpgradeName() == "autobullets")
 			{
-				this->isShieldActivated = false;
 				this->isAutoBulletsActivated = true;
-				this->isHomingMissileActivated = false;
-				this->startUpgradeTime = getTickCount();
 			}
 			else if (this->activatedUpgrade->getUpgradeName() == "homingmissile")
 			{
-				this->isShieldActivated = false;
-				this->isAutoBulletsActivated = false;
 				this->isHomingMissileActivated = true;
-				this->startUpgradeTime = getTickCount();
 			}
 			this->upgrades.erase(this->upgrades.begin() + i);
 			i = 0;
@@ -579,26 +636,27 @@ void Game::checkUpgradeBeingTaken()
 	}
 }
 
+// Updates upgrades
 void Game::updateUpgrade()
 {
 	auto newPos = std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2, this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2);
-	if (isShieldActivated)
+	if (this->isShieldActivated)
 	{
-		if ((getTickCount() - startUpgradeTime) / 1000 < this->upgradeSecondsDuration)
+		if ((getTickCount() - this->startUpgradeTime) / 1000 < this->upgradeSecondsDuration)
 		{
-			shield->updatePos(newPos);
-			shield->draw();
+			this->shield->updatePos(newPos);
+			this->shield->draw();
 		}
 		else
 		{
-			isShieldActivated = false;
+			this->isShieldActivated = false;
 			this->activatedUpgrade->~Upgrade();
 			this->activatedUpgrade = nullptr;
 		}
 	}
-	if (isAutoBulletsActivated)
+	else if (this->isAutoBulletsActivated)
 	{
-		unsigned int elapsedTime = getTickCount() - startUpgradeTime;
+		unsigned int elapsedTime = getTickCount() - this->startUpgradeTime;
 		if (elapsedTime / 1000 < this->upgradeSecondsDuration)
 		{
 			for (size_t i = 0; i < asteroids.size(); i++)
@@ -607,26 +665,26 @@ void Game::updateUpgrade()
 				{
 					Bullet* autoBullet = new Bullet(std::make_pair(this->player->getPos().first + this->player->getPlayerSpriteSize().first / 2, this->player->getPos().second + this->player->getPlayerSpriteSize().second / 2),
 						std::make_pair(asteroids[i]->getPos().first + asteroids[i]->getAsteroidSpriteSize().first / 2, asteroids[i]->getPos().second + asteroids[i]->getAsteroidSpriteSize().second / 2), true, nullptr);
-					autoBullets.push_back(autoBullet);
-					asteroids[i]->setAutoBulletTryToHit(true);
+					this->autoBullets.push_back(autoBullet);
+					this->asteroids[i]->setAutoBulletTryToHit(true);
 				}
 			}
 			if (elapsedTime % 2000 == 0)
 			{
 				for (size_t i = 0; i < asteroids.size(); i++)
 				{
-					asteroids[i]->setAutoBulletTryToHit(false);
+					this->asteroids[i]->setAutoBulletTryToHit(false);
 				}
 			}
 		}
 		else
 		{
-			isAutoBulletsActivated = false;
+			this->isAutoBulletsActivated = false;
 			this->activatedUpgrade->~Upgrade();
 			this->activatedUpgrade = nullptr;
 		}
 	}
-	if (isHomingMissileActivated)
+	else if (this->isHomingMissileActivated)
 	{
 		unsigned int elapsedTime = getTickCount() - startUpgradeTime;
 		if (elapsedTime / 1000 >= this->upgradeSecondsDuration)
@@ -643,6 +701,7 @@ void Game::updateUpgrade()
 	}
 }
 
+// Draws upgrades
 void Game::drawUpgrades()
 {
 	for (size_t i = 0; i < this->upgrades.size(); i++)
@@ -651,6 +710,7 @@ void Game::drawUpgrades()
 	}
 }
 
+// Checks what keys are pressed
 void Game::checkKeys()
 {
 	for (size_t i = 0; i < this->inputtedKeys.size(); i++)
@@ -659,22 +719,23 @@ void Game::checkKeys()
 	}
 }
 
+// Updates and draws bullets
 void Game::updateAndDrawBullets()
 {
-	for (size_t i = 0; i < bullets.size(); i++)
+	for (size_t i = 0; i < this->bullets.size(); i++)
 	{
-		bullets[i]->update();
-		bullets[i]->draw();
+		this->bullets[i]->update();
+		this->bullets[i]->draw();
 	}
-	for (size_t i = 0; i < autoBullets.size(); i++)
+	for (size_t i = 0; i < this->autoBullets.size(); i++)
 	{
-		autoBullets[i]->update();
-		autoBullets[i]->draw();
+		this->autoBullets[i]->update();
+		this->autoBullets[i]->draw();
 	}
-	for (size_t i = 0; i < homingMissiles.size(); i++)
+	for (size_t i = 0; i < this->homingMissiles.size(); i++)
 	{
-		homingMissiles[i]->update();
-		homingMissiles[i]->draw();
+		this->homingMissiles[i]->update();
+		this->homingMissiles[i]->draw();
 	}
 }
 
@@ -683,50 +744,52 @@ const char* Game::GetTitle()
 	return "asteroids";
 }
 
+// Checks all bullets for being out of bounds
 void Game::checkAllBulletsOutOfBounds()
 {
-	for (size_t i = 0; i < autoBullets.size(); i++)
+	for (size_t i = 0; i < this->autoBullets.size(); i++)
 	{
-		checkBulletsOutOfBounds(autoBullets[i]);
+		this->checkBulletsOutOfBounds(this->autoBullets[i]);
 	}
-	for (size_t i = 0; i < bullets.size(); i++)
+	for (size_t i = 0; i < this->bullets.size(); i++)
 	{
-		checkBulletsOutOfBounds(bullets[i]);
+		this->checkBulletsOutOfBounds(this->bullets[i]);
 	}
-	for (size_t i = 0; i < homingMissiles.size(); i++)
+	for (size_t i = 0; i < this->homingMissiles.size(); i++)
 	{
-		checkBulletsOutOfBounds(homingMissiles[i]);
+		this->checkBulletsOutOfBounds(this->homingMissiles[i]);
 	}
 }
 
+// Checks bullets for being out of bounds
 void Game::checkBulletsCollisions(std::vector<Bullet*>& b)
 {
 	for (size_t i = 0; i < b.size(); i++)
 	{
-		std::pair<float, float> bulletPos = b[i]->getPos();
-		std::pair<int, int> bpriteSize = b[i]->getBulletSpriteSize();
+		auto bulletPos = b[i]->getPos();
+		auto bpriteSize = b[i]->getBulletSpriteSize();
 
-		for (size_t j = 0; j < asteroids.size(); j++)
+		for (size_t j = 0; j < this->asteroids.size(); j++)
 		{
-			std::pair<int, int> asteroidPos = asteroids[j]->getPos();
-			std::pair<int, int> asteroidSpriteSize = asteroids[j]->getAsteroidSpriteSize();
+			auto asteroidPos = this->asteroids[j]->getPos();
+			auto asteroidSpriteSize = this->asteroids[j]->getAsteroidSpriteSize();
 
 			if (this->checkCollisions(bulletPos, bpriteSize, asteroidPos, asteroidSpriteSize))
 			{
 				b[i]->~Bullet();
 				b.erase(b.begin() + i);
 
-				if (!asteroids[j]->getIsSmall())
+				if (!this->asteroids[j]->getIsSmall())
 				{
-					auto newAsteroids = asteroids[j]->split();
-					asteroids.push_back(newAsteroids.first);
-					asteroids.push_back(newAsteroids.second);
+					auto newAsteroids = this->asteroids[j]->split();
+					this->asteroids.push_back(newAsteroids.first);
+					this->asteroids.push_back(newAsteroids.second);
 				}
 				if (static_cast <float> (rand()) / static_cast <float> (RAND_MAX) <= this->abilityProbability)
 				{
 					std::pair<float, float> upgradePos;
-					upgradePos.first = this->asteroids[j]->getPos().first + this->asteroids[j]->getAsteroidSpriteSize().first / 2;
-					upgradePos.second = this->asteroids[j]->getPos().second + this->asteroids[j]->getAsteroidSpriteSize().second / 2;
+					upgradePos.first = this->asteroids[j]->getPos().first + (float)this->asteroids[j]->getAsteroidSpriteSize().first / 2;
+					upgradePos.second = this->asteroids[j]->getPos().second + (float)this->asteroids[j]->getAsteroidSpriteSize().second / 2;
 
 					Upgrade* upgrade = new Upgrade(upgradePos);
 					this->upgrades.push_back(upgrade);

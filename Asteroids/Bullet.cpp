@@ -8,7 +8,7 @@ int Bullet::getCount()
 	return Bullet::count;
 }
 
-Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, bool autoBullet, Asteroid* aim)
+Bullet::Bullet(std::pair<float, float> playerPos, std::pair<int, int> crosshairPos, bool autoBullet, Asteroid* aim)
 {
 	this->asteroid = nullptr;
 	if (autoBullet) this->sprite = createSprite("..\\data\\autobullet.png"); 
@@ -39,8 +39,16 @@ Bullet::Bullet(std::pair<int, int> playerPos, std::pair<int, int> crosshairPos, 
 	count++;
 }
 
-
-void Bullet::move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, int dirX, int dirY, int movementSpeed)
+/// <summary>
+/// Moves all bullets
+/// </summary>
+/// <param name="bullets"> - all bullets</param>
+/// <param name="autoBullets"> - all autobullets</param>
+/// <param name="homingMissiles"> - all homing missiles</param>
+/// <param name="dirX"> - x direction</param>
+/// <param name="dirY"> - y direction</param>
+/// <param name="movementSpeed"> - movement speed</param>
+void Bullet::move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets, std::vector<Bullet*> homingMissiles, int dirX, int dirY, float movementSpeed)
 {
 	for (size_t i = 0; i < bullets.size(); i++)
 	{
@@ -54,12 +62,15 @@ void Bullet::move(std::vector<Bullet*> bullets, std::vector<Bullet*> autoBullets
 	}
 }
 
+/// <summary>
+/// Updates bullets position / velocity
+/// </summary>
 void Bullet::update()
 {
 	if (this->asteroid != nullptr)
 	{
-		this->aimDir.first = this->asteroid->getPos().first + this->asteroid->getAsteroidSpriteSize().first / 2 - this->x;
-		this->aimDir.second = this->asteroid->getPos().second + this->asteroid->getAsteroidSpriteSize().second / 2 - this->y;
+		this->aimDir.first = this->asteroid->getPos().first + (float)this->asteroid->getAsteroidSpriteSize().first / 2 - this->x;
+		this->aimDir.second = this->asteroid->getPos().second + (float)this->asteroid->getAsteroidSpriteSize().second / 2 - this->y;
 
 		this->aimDirNorm.first = this->aimDir.first / sqrt(pow(this->aimDir.first, 2) + pow(this->aimDir.second, 2));
 		this->aimDirNorm.second = this->aimDir.second / sqrt(pow(this->aimDir.first, 2) + pow(this->aimDir.second, 2));
@@ -71,6 +82,9 @@ void Bullet::update()
 	this->y += this->currVelocity.second;
 }
 
+/// <summary>
+/// Draws bullet's sprite
+/// </summary>
 void Bullet::draw()
 {
 	drawSprite(this->sprite, (int)this->x, (int)this->y);
@@ -83,16 +97,22 @@ Bullet::~Bullet()
 	count--;
 }
 
-std::pair<float, float> Bullet::getPos()
+std::pair<float, float> Bullet::getPos() const
 {
 	return std::pair<float, float>(this->x, this->y);
 }
 
-std::pair<int, int> Bullet::getBulletSpriteSize()
+std::pair<int, int> Bullet::getBulletSpriteSize() const
 {
 	return std::pair<int, int>(this->spriteWidth, this->spriteHeight);
 }
 
+/// <summary>
+/// Moves bullet to another side of map
+/// </summary>
+/// <param name="byX"> (-1) - flip by left, 1 - flip by right</param>
+/// <param name="byY"> (-1) - flip by down, 1 - flip by up</param>
+/// <param name="mapSize"> - map's sprite size</param>
 void Bullet::flip(int byX, int byY, std::pair<int, int> mapSize)
 {
 	// flip by left
